@@ -1,0 +1,109 @@
+.login-interface {
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     flex-direction: column;
+}
+
+.login-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-interface img {
+    width: 55%;
+    margin-top: 40px;
+}
+
+form {
+    width: 100%;
+}
+
+.login-form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-form form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.login-form form input {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px 15px;
+    margin: 20px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+
+}
+
+.login-interface button {
+    background-color: #D3A941;
+    color: white;
+    height: 48px;
+    border-radius: 15px;
+    border: none;
+    margin: 10px;
+    width: 324px;
+}
+
+.login-interface p {
+    margin: 20px;
+}
+
+.no-acc {
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     flex-direction: column;
+     height: 60px;
+}
+
+.no-acc img {
+     width: 30px;
+}
+
+.f-p {
+    color: black;
+}
+
+a{
+    color: black;
+}
+
+.f-p a:visited , a::after, a:hover {
+    color:  black;
+}
+.no-acc a {
+     color: #D3A941;
+}
+
+
+
+.input-container-login {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.p-3 {
+    font-weight: bold;
+}
+
+.p-3 span {
+    color: #D3A941;
+}

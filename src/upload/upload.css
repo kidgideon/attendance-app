@@ -1,0 +1,56 @@
+
+
+.uploading-interface {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 20px;
+}
+
+.uploading-interface form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.uploading-interface form div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.uploading-interface form div p {
+    width: 92%;
+    text-align: start;
+    font-weight: bold;
+}
+
+.uploading-interface form div input {
+    width: 80%;
+    height: 40px;
+    max-width: 500px;
+    padding: 10px 15px;
+    margin: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+
+} 
+
+.uploading-interface form button {
+    background-color: #D3A941;
+    color: white;
+    height: 48px;
+    border-radius: 15px;
+    border: none;
+    margin: 10px;
+    width: 324px;
+}
