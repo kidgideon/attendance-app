@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 import image from '../assets/mobile.svg';
 import icon from '../assets/googleicon.svg';
 import './login.css';
-import { auth } from '../../config/config'; // Import Firebase auth
-import {
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  getAdditionalUserInfo,
+import {signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,getAdditionalUserInfo,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import { getDoc, doc } from 'firebase/firestore';
-import { db } from '../../config/config'; // Make sure to import your firestore db
+import { db , auth} from '../../config/config'; // Make sure to import your firestore db
 
 const Login = () => {
   const [email, setEmail] = useState('');
