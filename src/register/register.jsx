@@ -137,7 +137,7 @@ const Register = () => {
         </div>
       )}
       <div className="svg-area">
-        <img src={image} alt="svg" />
+
         <h2>Create account</h2>
       </div>
       <div className="form-area">
@@ -209,6 +209,7 @@ const Register = () => {
           </button>
         </form>
         <div className="continue-with">
+ <div><p></p> <span>or</span> <p></p></div>
           <img
             src={icon}
             alt="google"

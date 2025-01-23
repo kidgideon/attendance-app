@@ -11,6 +11,7 @@ import {
   DialogActions,
   CircularProgress,
 } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid'; // For generating a unique id
 import toast from 'react-hot-toast';
 
 const Course = () => {
@@ -65,9 +66,13 @@ const Course = () => {
   }, [courseId, navigate]);
 
   const handleCreateSession = async () => {
+
+    const sessionId =  uuidv4();
     if (!user || !course) return;
 
     const newSession = {
+      courseId,
+      sessionId,
       students: [],
       courseCode: course.courseCode,
       courseName: course.courseName,
@@ -102,6 +107,7 @@ const Course = () => {
       await updateDoc(userDocRef, { courses: updatedCourses });
       toast.success('Session created successfully!');
       setDialogOpen(false);
+      navigate(`/session/${sessionId}`)
     } catch (error) {
       console.error('Error creating session:', error);
     } finally {

@@ -2,10 +2,9 @@
     width: 100%;
     height: 100vh;
     display: flex;
-    justify-content: start;
+    justify-content: center;
     align-items: center;
     flex-direction: column;
-    padding-top: 50px;
 }
 
 a:hover, a:visited, a:active {
@@ -43,7 +42,7 @@ a:hover, a:visited, a:active {
     align-items: center;
     gap: 5px;
     font-size: 14px;
-    color: #555;
+    color: white;
   }
   
 
@@ -71,8 +70,35 @@ a:hover, a:visited, a:active {
     text-align: center;
     margin: 3px;
     font-size: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
+  .continue-with div  {
+    width: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .continue-with div p {
+    width: 80%; 
+    height: 2px;
+    background-color: gray;
+  }
+
+  .continue-with img {
+    width: 50px;
+    height: 50px;
+  }
+
+
+  .continue-with div span {
+    margin: 10px;
+  }
   .form-area {
     width: 86%;
     display: flex;
@@ -91,10 +117,10 @@ a:hover, a:visited, a:active {
   }
 
 .btn-3{
-    background-color: #D3A941;
+    background-color: rgb(255, 238, 0);
     color: white;
     height: 48px;
-    border-radius: 15px;
+    border-radius: 8px;
     border: none;
     margin: 10px;
     width: 324px;
@@ -112,14 +138,15 @@ a:hover, a:visited, a:active {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    margin: 5px;
   }
 
   .input-container input {
     width: 100%;
     max-width: 500px;
-    height: 20px;
+    height: 30px;
     border-radius: 15px;
-    margin: 10px;
+    margin: 5px;
     padding: 10px 15px;
     border: none;
     outline: none;

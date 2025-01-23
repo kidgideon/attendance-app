@@ -1,5 +1,6 @@
 .login-interface {
      width: 100%;
+     height: 100vh;
      display: flex;
      justify-content: center;
      align-items: center;
@@ -15,7 +16,7 @@
 
 .login-interface img {
     width: 55%;
-    margin-top: 40px;
+ 
 }
 
 form {
@@ -41,9 +42,10 @@ form {
 .login-form form input {
     width: 100%;
     max-width: 500px;
+    height: 30px;
+    border-radius: 15px;
+    margin: 5px;
     padding: 10px 15px;
-    margin: 20px;
-    border-radius: 10px;
     border: none;
     outline: none;
 
@@ -76,16 +78,13 @@ form {
      width: 30px;
 }
 
-.f-p {
-    color: black;
-}
 
 a{
-    color: black;
+    color: white;
 }
 
 .f-p a:visited , a::after, a:hover {
-    color:  black;
+    color:  white;
 }
 .no-acc a {
      color: #D3A941;

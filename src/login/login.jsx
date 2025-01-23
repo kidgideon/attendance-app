@@ -107,7 +107,7 @@ const Login = () => {
       )}
 
       <div className="login-image">
-        <img src={image} alt="Login Illustration" />
+      
       </div>
       <h2>Welcome Back</h2>
       <p>Please log in to an existing account</p>
@@ -140,13 +140,15 @@ const Login = () => {
         </form>
       </div>
 
+      <div className="continue-with">
+ <div><p></p> <span>or</span> <p></p></div>
+          <img
+           src={icon}
+           alt="Google icon"
+           onClick={handleGoogleLogin}
+          />
+        </div>
       <div className="no-acc">
-        <img
-          src={icon}
-          alt="Google icon"
-          onClick={handleGoogleLogin}
-          style={{ cursor: 'pointer', width: '40px', height: '40px' }} // Resize the icon here
-        />
         <p className="p-3">
           Don't have an account? <span><a href="/register">Sign up</a></span>
         </p>

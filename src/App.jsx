@@ -10,6 +10,7 @@ import Lecturer from "./lecturer-dashboard/ldashboad";
 import ForgetPassword from "./forgetPassword/password";
 import Upload from "./upload/upload";
 import Course from "./course-area/course";
+import Session from "./session/session";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/upload/:uid" element={<Upload />} />
         <Route path="/course/:id" element={<Course />} />
+        <Route path="/session/:id" element={<Session />} />
       </Routes>
     </Router>
   );
