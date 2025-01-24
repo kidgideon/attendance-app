@@ -125,7 +125,7 @@ const Lecturer = () => {
              <div onClick={() => courseArea(course.courseId)} key={index} className="course-card">
               <div className="course-card-color"></div>
               <div className="course-details">
-                <h4>{course.courseCode}</h4>
+                <h3 className='c-h4'>{course.courseCode}</h3>
                 <p>{course.courseName}</p>
                 <p>{course.description}</p>
               </div>
@@ -146,14 +146,16 @@ const Lecturer = () => {
       <div className="footer-l-d">
         <span>
           <i className="fa-solid fa-house"></i>
+          home
         </span>
         <Link to={`/upload/${currentUser?.uid}`}>
-          <span>
+          <div className='c-s-c-t'>
             <i className="fa-solid fa-plus"></i>
-          </span>
+          </div>
         </Link>
         <span>
           <i className="fa-solid fa-gear"></i>
+          settings
         </span>
       </div>
     </div>

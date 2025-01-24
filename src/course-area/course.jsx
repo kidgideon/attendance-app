@@ -22,6 +22,14 @@ const Course = () => {
   const [course, setCourse] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false); // State for spinner
+  const [activeSession, setActiveSession] = useState(null);
+
+  useEffect(() => {
+    if (course) {
+      const theactiveSession = course.sessions?.find((session) => session.active);
+      setActiveSession(theactiveSession);
+    }
+  }, [course]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,9 +76,11 @@ const Course = () => {
   const handleCreateSession = async () => {
 
     const sessionId =  uuidv4();
+    const sessionCode = uuidv4().replace(/-/g, '').slice(0, 6);
     if (!user || !course) return;
 
     const newSession = {
+      code: sessionCode,
       courseId,
       sessionId,
       students: [],
@@ -148,13 +158,13 @@ const Course = () => {
             <p className="c-i-n">{course ? course.courseName : 'Loading...'}</p>
             <p className="c-i-d">{course ? course.description : 'Loading...'}</p>
             <div className="btn-c-5">
-              {course?.sessions?.some((session) => session.active) ? (
-                <button onClick={() => navigate(`/active-session/${courseId}`)}>
-                  See Active Session
-                </button>
-              ) : (
-                <button onClick={() => setDialogOpen(true)}>Create Session</button>
-              )}
+            {activeSession ? (
+  <button onClick={() => navigate(`/session/${activeSession.sessionId}`)}>
+    See Active Session
+  </button>
+) : (
+  <button onClick={() => setDialogOpen(true)}>Create Session</button>
+)}
             </div>
           </div>
         </div>
@@ -177,19 +187,21 @@ const Course = () => {
         ))}
       </div>
 
-      <div className="footer-l-d">
-        <span>
-          <i className="fa-solid fa-house"></i>
-        </span>
-        <Link to={`/upload`}>
-          <span>
-            <i className="fa-solid fa-plus"></i>
-          </span>
-        </Link>
-        <span>
-          <i className="fa-solid fa-gear"></i>
-        </span>
-      </div>
+       <div className="footer-l-d">
+             <span>
+               <i className="fa-solid fa-house"></i>
+               home
+             </span>
+             <Link to={`/upload`}>
+               <div className='c-s-c-t'>
+                 <i className="fa-solid fa-plus"></i>
+               </div>
+             </Link>
+             <span>
+               <i className="fa-solid fa-gear"></i>
+               settings
+             </span>
+           </div>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Confirm Session Creation</DialogTitle>

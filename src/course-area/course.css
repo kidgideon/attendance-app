@@ -15,6 +15,7 @@
     height: 150px;
     border-radius: 10px;
     background-color: white;
+    color: black;
 }
 
 .course-body button {
@@ -66,7 +67,6 @@
 }
 
 .higher-session {
-    height: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,9 +114,6 @@
     padding-top: 15px;
     flex-direction: column;
     gap: 20px;
-    height: 350px;
-    overflow-y: auto;
-    padding-bottom: 20px;
 }
 
 .past-session {
@@ -149,18 +146,18 @@
 
 .p-c-t-c {
     font-size: 95%;
-    color: lightgray;
+    color: black;
     font-weight: bold;
 }
 
 .p-c-t-n {
     font-size: 85%;
-    color: lightgray;
+    color: rgb(145, 145, 145);
 }
 
 .p-c-t-d {
     font-size: 80%;
-    color: lightgray;
+    color: rgb(145, 145, 145);
 }
 
 .p-c-d {
