@@ -1,14 +1,14 @@
 import './upload.css';
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link , useNavigate} from 'react-router-dom';
 import { db } from '../../config/config'; // Import your Firebase configuration
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore'; // Firebase Firestore functions
-import { v4 as uuidv4 } from 'uuid'; // For generating a unique courseId
+import { doc, updateDoc, arrayUnion, setDoc, collection } from 'firebase/firestore'; // Firebase Firestore functions
 import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material'; // Import CircularProgress from MUI
 
 const Upload = () => {
   const { uid } = useParams(); // Get the lecturerId from the route parameters
+  const navigate = useNavigate();
   const lecturerId = uid;
   const [courseData, setCourseData] = useState({
     courseName: '',
@@ -30,17 +30,21 @@ const Upload = () => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
-
+  
     try {
       if (!courseData.courseName || !courseData.courseCode || !courseData.description) {
         toast.error('All fields are required!');
         setLoading(false);
         return;
       }
-
+  
+      // Create a new document reference with an auto-generated ID
+      const courseRef = doc(collection(db, 'courses'));
+      const courseId = courseRef.id; // Get the auto-generated ID
+  
       const newCourse = {
         ...courseData,
-        courseId: uuidv4(), // Generate a unique course ID
+        courseId, // Save the auto-generated ID as part of the course data
         dateCreated: new Date().toISOString(),
         moderators: [],
         admin: lecturerId,
@@ -48,25 +52,28 @@ const Upload = () => {
         sessions: [],
         active: true,
       };
-
-      // Get the lecturer's document from Firestore
-      const lecturerRef = doc(db, 'users', lecturerId);
-
-      // Update the lecturer's courses array
-      await updateDoc(lecturerRef, {
-        courses: arrayUnion(newCourse),
+  
+      // Save the course data to Firestore
+      await setDoc(courseRef, newCourse);
+  
+      // Update the lecturer's courses array with the new course ID
+      await updateDoc(doc(db, 'users', lecturerId), {
+        courses: arrayUnion(courseId), // Use the generated ID
       });
-
+  
       toast.success('Course registered successfully!');
-      setCourseData({ courseName: '', courseCode: '', description: '' });
+      setCourseData({ courseName: '', courseCode: '', description: '' }); // Reset the form
+      setTimeout(() => {
+navigate(`/lecturer/${lecturerId}`)
+      }, 1000)
     } catch (error) {
-      console.log(error)
-      console.log(error.message)
+      console.error(error);
       setMessage(error.message || 'Failed to register course. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="uploading-interface">
@@ -130,20 +137,19 @@ const Upload = () => {
         </button>
       </form>
 
-
       <div className="footer-l-d">
-        <Link to={`/lecturer/${lecturerId}`}>
         <span>
           <i className="fa-solid fa-house"></i>
+          home
         </span>
-        </Link>
-        <Link >
-          <span>
+        <Link to={`/upload`}>
+          <div className='c-s-c-t'>
             <i className="fa-solid fa-plus"></i>
-          </span>
+          </div>
         </Link>
         <span>
           <i className="fa-solid fa-gear"></i>
+          settings
         </span>
       </div>
     </div>

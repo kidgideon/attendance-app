@@ -46,7 +46,7 @@
     left: 10px;
     right: 10px;
     display: flex;
-    height: 100px;
+    height: 70px;
     justify-content: space-between;
     align-items: center;
     z-index: 10px;
@@ -56,7 +56,7 @@
 
 .footer-l-d i {
     color: rgb(184, 181, 181);
-    font-size: 30px;
+    font-size: 20px;
 }
 
 .footer-l-d span {
@@ -64,13 +64,12 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin: 0px 20px;
 }
 
 .c-s-c-t {
   background-color: white;
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 100%;
   display: flex;
   justify-content: center;
@@ -83,6 +82,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    gap: 20px;
 }
 
 .course-card {

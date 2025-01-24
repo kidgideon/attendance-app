@@ -3,14 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { auth, db } from '../../config/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  CircularProgress,
-} from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid'; // For generating a unique id
 import toast from 'react-hot-toast';
 
@@ -25,63 +18,70 @@ const Course = () => {
   const [activeSession, setActiveSession] = useState(null);
 
   useEffect(() => {
-    if (course) {
-      const theactiveSession = course.sessions?.find((session) => session.active);
-      setActiveSession(theactiveSession);
-    }
-  }, [course]);
+    const fetchCourse = async () => {
+      try {
+        // Ensure the user is authenticated
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          navigate('/login');
+          return;
+        }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const currentUser = auth.currentUser;
-
-      if (!currentUser) {
-        navigate('/login');
-        return;
-      }
-
-      const userDocRef = doc(db, 'users', currentUser.uid);
-      const userSnapshot = await getDoc(userDocRef);
-
-      if (userSnapshot.exists()) {
-        setUser({ uid: currentUser.uid, ...userSnapshot.data() });
-      } else {
-        console.error('User data not found in Firestore!');
-        navigate(-1);
-        return;
-      }
-
-      const lecturerDocRef = doc(db, 'users', currentUser.uid);
-      const lecturerSnapshot = await getDoc(lecturerDocRef);
-
-      if (lecturerSnapshot.exists()) {
-        const courses = lecturerSnapshot.data().courses || [];
-        const matchedCourse = courses.find((c) => c.courseId === courseId);
-
-        if (matchedCourse) {
-          setCourse(matchedCourse);
+        // Fetch user data
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userSnapshot = await getDoc(userDocRef);
+        if (userSnapshot.exists()) {
+          setUser({ uid: currentUser.uid, ...userSnapshot.data() });
         } else {
-          console.error('Course not found!');
+          console.error('User data not found in Firestore!');
+          navigate(-1);
+          return;
+        }
+
+        // Fetch course details directly from the `courses` collection
+        const courseDocRef = doc(db, 'courses', courseId);
+        const courseSnapshot = await getDoc(courseDocRef);
+
+        if (courseSnapshot.exists()) {
+          const courseData = courseSnapshot.data();
+          setCourse(courseData);
+
+          // Check if the user is an admin or a moderator
+          const isAuthorized =
+            courseData.admin === currentUser.uid ||
+            courseData.moderators?.includes(currentUser.uid);
+
+          if (!isAuthorized) {
+            toast.error('You are not authorized to manage this course!');
+            navigate(-1); // Redirect unauthorized users
+          } else {
+            const theactiveSession = courseData.sessions?.find((session) => session.active);
+            setActiveSession(theactiveSession);
+          }
+        } else {
+          console.error('Course not found in Firestore!');
           navigate(-1);
         }
-      } else {
-        console.error('Lecturer data not found!');
+      } catch (error) {
+        console.error('Error fetching data:', error);
         navigate(-1);
       }
     };
 
-    fetchData();
+    fetchCourse();
   }, [courseId, navigate]);
 
   const handleCreateSession = async () => {
+    if (!user || !course || (course.admin !== user.uid && !course.moderators?.includes(user.uid))) {
+      toast.error('You are not authorized to create a session for this course!');
+      return;
+    }
 
-    const sessionId =  uuidv4();
+    const sessionId = uuidv4();
     const sessionCode = uuidv4().replace(/-/g, '').slice(0, 6);
-    if (!user || !course) return;
 
     const newSession = {
       code: sessionCode,
-      courseId,
       sessionId,
       students: [],
       courseCode: course.courseCode,
@@ -91,37 +91,27 @@ const Course = () => {
       active: true,
     };
 
-    setLoading(true); // Start spinner
+    setLoading(true);
     try {
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-      if (!userDocSnap.exists()) {
-        console.error('User document not found!');
-        setLoading(false);
-        return;
+      // Update sessions array in the `courses` collection
+      const courseDocRef = doc(db, 'courses', courseId);
+      const courseSnapshot = await getDoc(courseDocRef);
+
+      if (courseSnapshot.exists()) {
+        const courseData = courseSnapshot.data();
+        const updatedSessions = courseData.sessions ? [...courseData.sessions, newSession] : [newSession];
+
+        await updateDoc(courseDocRef, { sessions: updatedSessions });
+        toast.success('Session created successfully!');
+        setDialogOpen(false);
+        navigate(`/session/${courseId}/${sessionId}`);
+      } else {
+        console.error('Course not found for session creation!');
       }
-
-      const userData = userDocSnap.data();
-      const userCourses = userData.courses || [];
-
-      const updatedCourses = userCourses.map((c) => {
-        if (c.courseId === course.courseId) {
-          return {
-            ...c,
-            sessions: c.sessions ? [...c.sessions, newSession] : [newSession],
-          };
-        }
-        return c;
-      });
-
-      await updateDoc(userDocRef, { courses: updatedCourses });
-      toast.success('Session created successfully!');
-      setDialogOpen(false);
-      navigate(`/session/${sessionId}`)
     } catch (error) {
       console.error('Error creating session:', error);
     } finally {
-      setLoading(false); // Stop spinner
+      setLoading(false);
     }
   };
 
@@ -158,13 +148,15 @@ const Course = () => {
             <p className="c-i-n">{course ? course.courseName : 'Loading...'}</p>
             <p className="c-i-d">{course ? course.description : 'Loading...'}</p>
             <div className="btn-c-5">
-            {activeSession ? (
-  <button onClick={() => navigate(`/session/${activeSession.sessionId}`)}>
-    See Active Session
-  </button>
-) : (
-  <button onClick={() => setDialogOpen(true)}>Create Session</button>
-)}
+              {(course?.admin === user?.uid || course?.moderators?.includes(user?.uid)) ? (
+                activeSession ? (
+                  <button onClick={() => navigate(`/session/${activeSession.sessionId}`)}>See Active Session</button>
+                ) : (
+                  <button onClick={() => setDialogOpen(true)}>Create Session</button>
+                )
+              ) : (
+                <p>checking permissions</p>
+              )}
             </div>
           </div>
         </div>
@@ -173,7 +165,7 @@ const Course = () => {
 
       <div className="session-history">
         {course?.sessions?.map((session, index) => (
-          <div className="past-session" key={index}>
+          <div className="past-session" onClick={() => navigate(`/session/${courseId}/${session.sessionId}`)} key={index}>
             <div className="past-color-area">g</div>
             <div className="course-details">
               <p className="p-c-t-c">{session.courseCode}</p>
@@ -187,27 +179,23 @@ const Course = () => {
         ))}
       </div>
 
-       <div className="footer-l-d">
-             <span>
-               <i className="fa-solid fa-house"></i>
-               home
-             </span>
-             <Link to={`/upload`}>
-               <div className='c-s-c-t'>
-                 <i className="fa-solid fa-plus"></i>
-               </div>
-             </Link>
-             <span>
-               <i className="fa-solid fa-gear"></i>
-               settings
-             </span>
-           </div>
+      <div className="footer-l-d">
+        <span>
+          <i className="fa-solid fa-house"></i> home
+        </span>
+        <Link to={`/upload`}>
+          <div className="c-s-c-t">
+            <i className="fa-solid fa-plus"></i>
+          </div>
+        </Link>
+        <span>
+          <i className="fa-solid fa-gear"></i> settings
+        </span>
+      </div>
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Confirm Session Creation</DialogTitle>
-        <DialogContent>
-          Are you sure you want to create a new session for this course?
-        </DialogContent>
+        <DialogContent>Are you sure you want to create a new session for this course?</DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)} color="primary">
             Cancel

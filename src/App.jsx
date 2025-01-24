@@ -11,6 +11,7 @@ import ForgetPassword from "./forgetPassword/password";
 import Upload from "./upload/upload";
 import Course from "./course-area/course";
 import Session from "./session/session";
+import ProtectedRoute from "./protected-route/route";
 
 function App() {
   return (
@@ -20,14 +21,16 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/splash" element={<Splash />} />
-        <Route path="/unboarding" element={<Unboarding />} />
+        <Route path="/splash" element={<Splash />} />     
+        <Route path="/" element={ <ProtectedRoute> <Unboarding /></ProtectedRoute>
+  }
+/>
         <Route path="/student/:uid" element={<Student />} />
         <Route path="/lecturer/:uid" element={<Lecturer />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/upload/:uid" element={<Upload />} />
         <Route path="/course/:id" element={<Course />} />
-        <Route path="/session/:id" element={<Session />} />
+        <Route path="/session/:courseId/:sessionId" element={<Session />} />
       </Routes>
     </Router>
   );

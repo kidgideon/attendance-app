@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Removed useParams
-import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Firebase auth
-import { db } from '../../config/config'; // Firebase config
-import { doc, getDoc } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { db } from '../../config/config';
+import { doc, getDoc} from 'firebase/firestore';
 import './ldashboard.css';
 
 const Lecturer = () => {
@@ -11,7 +11,7 @@ const Lecturer = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lecturerData, setLecturerData] = useState({});
-  const [currentUser, setCurrentUser] = useState(null); // Store authenticated user
+  const [currentUser, setCurrentUser] = useState(null);
 
   // Check authentication status and get the current user
   useEffect(() => {
@@ -19,13 +19,13 @@ const Lecturer = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsAuthenticated(true);
-        setCurrentUser(user); // Set the authenticated user
+        setCurrentUser(user);
       } else {
         setIsAuthenticated(false);
-        navigate('/login'); // Redirect to login page if not authenticated
+        navigate('/login');
       }
     });
-    return () => unsubscribe(); // Cleanup the listener on component unmount
+    return () => unsubscribe();
   }, [navigate]);
 
   // Fetch lecturer data
@@ -34,7 +34,7 @@ const Lecturer = () => {
 
     const fetchLecturerData = async () => {
       try {
-        const lecturerRef = doc(db, 'users', currentUser.uid); // Use currentUser.uid
+        const lecturerRef = doc(db, 'users', currentUser.uid);
         const lecturerSnapshot = await getDoc(lecturerRef);
 
         if (lecturerSnapshot.exists()) {
@@ -51,37 +51,60 @@ const Lecturer = () => {
   }, [isAuthenticated, currentUser]);
 
   // Fetch courses
+  // Fetch courses
   useEffect(() => {
     if (!isAuthenticated || !currentUser) return;
-
+  
     const fetchCourses = async () => {
       try {
-        const lecturerDocRef = doc(db, 'users', currentUser.uid); // Use currentUser.uid
+        setLoading(true); // Set loading state while fetching data
+  
+        // Reference to the lecturer's document in the 'users' collection
+        const lecturerDocRef = doc(db, 'users', currentUser.uid);
         const lecturerDoc = await getDoc(lecturerDocRef);
-
+  
         if (lecturerDoc.exists()) {
           const lecturerData = lecturerDoc.data();
-          setCourses(lecturerData.courses || []);
+          const courseIds = lecturerData.courses || []; // Array of course IDs
+          console.log("Course IDs:", courseIds);
+  
+          if (courseIds.length === 0) {
+            setCourses([]); // No courses found
+            setLoading(false);
+            return;
+          }
+  
+          // Fetch details for each courseId individually
+          const coursePromises = courseIds.map(async (courseId) => {
+            const courseDocRef = doc(db, 'courses', courseId); // Reference to the course document
+            const courseDoc = await getDoc(courseDocRef);
+            return courseDoc.exists() ? { id: courseId, ...courseDoc.data() } : null;
+          });
+  
+          // Wait for all promises to resolve
+          const fetchedCourses = (await Promise.all(coursePromises)).filter(Boolean); // Remove null values
+          setCourses(fetchedCourses); // Save fetched courses to state
         } else {
           console.error('No lecturer found!');
         }
       } catch (error) {
         console.error('Error fetching courses:', error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading spinner
       }
     };
-
+  
     fetchCourses();
   }, [isAuthenticated, currentUser]);
-
+  
+  
   if (!isAuthenticated) {
-    return null; // Optionally display a loading spinner or blank screen during redirection
+    return null;
   }
 
   const courseArea = (id) => {
-    navigate(`/course/${id}`)
-  }
+    navigate(`/course/${id}`);
+  };
 
   return (
     <div className="lecturer-dashboard">
@@ -89,8 +112,10 @@ const Lecturer = () => {
       <div className="top-section-lecturer">
         <div className="t-f-d">
           <img
-            src={lecturerData?.profilePicture ||
-              'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'}
+            src={
+              lecturerData?.profilePicture ||
+              'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'
+            }
             alt="Lecturer Profile"
           />
         </div>
@@ -121,11 +146,11 @@ const Lecturer = () => {
             <p>Register courses</p>
           </div>
         ) : (
-          courses.map((course, index) => (
-             <div onClick={() => courseArea(course.courseId)} key={index} className="course-card">
+          courses.map((course) => (
+            <div onClick={() => courseArea(course.courseId)} key={course.courseId} className="course-card">
               <div className="course-card-color"></div>
               <div className="course-details">
-                <h3 className='c-h4'>{course.courseCode}</h3>
+                <h3 className="c-h4">{course.courseCode}</h3>
                 <p>{course.courseName}</p>
                 <p>{course.description}</p>
               </div>
@@ -149,7 +174,7 @@ const Lecturer = () => {
           home
         </span>
         <Link to={`/upload/${currentUser?.uid}`}>
-          <div className='c-s-c-t'>
+          <div className="c-s-c-t">
             <i className="fa-solid fa-plus"></i>
           </div>
         </Link>
