@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import image from '../assets/upated.svg';
+import facebook from './facebook.svg';
+import featured from './feautured.svg';
+import eclipse from './vector.svg'
+import google from './google.svg'
 import './register.css';
 import { auth, db } from '../../config/config';
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  sendEmailVerification,
+import {createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendEmailVerification,
 } from 'firebase/auth';
-import icon from '../assets/googleicon.svg';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import CircularProgress from '@mui/material/CircularProgress'; // Assuming Material UI is used
+
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -115,8 +114,16 @@ const Register = () => {
     }
   };
 
+  
+  const moveBack = () => {
+    navigate(-1);
+  }
+
+
   return (
-    <div className="register-interface">
+    <div  style={{
+      minHeight: "100dvh",
+    }} className="register-interface">
       {loading && (
         <div
           className="spinner-overlay"
@@ -133,102 +140,101 @@ const Register = () => {
             zIndex: 9999,
           }}
         >
-          <CircularProgress style={{ color: '#D3A941' }} />
+          <CircularProgress style={{ color: '#00CBCC' }} />
         </div>
       )}
-      <div className="svg-area">
+ <div onClick={moveBack} className='bacck-arrow'>
+          <img src={eclipse} alt="" />
+          </div>
+    <div className="main-section">
+    <div className="featured-image-area">
+      <img src={featured} alt="" />
+    </div>
+    <div className="form-input-area">
+      <p className="top-area">Already have an account? <a href="/login">signin</a></p>
+<div className="signup-area">
+<h1 style={{margin: '0px'}}>Create Account</h1>
+<p style={{margin: '0px'}}>Get started</p>
 
-        <h2>Create account</h2>
-      </div>
-      <div className="form-area">
-        <form onSubmit={handleEmailPasswordSignUp}>
-          <div className="input-container">
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
-              required
-            />
-          </div>
-          <div className="input-container">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              required
-            />
-          </div>
-          <div className="input-container">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                checkPasswordStrength(e.target.value);
-              }}
-              placeholder="Password"
-              required
-            />
-            <div>
-              {passwordStrength && (
-                <small>{passwordStrength === 'Strong password' ? <span  style={{color: "green"}}>strong</span> : <span  style={{color: "red"}}>weak password</span> }</small>
-              )}
-            </div>
-          </div>
-          <div className="input-container">
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm Password"
-              required
-            />
-          </div>
-          <div className="checkbox-container">
-            <label>
-              <input
-                type="checkbox"
-                checked={role === 'lecturer'}
-                onChange={() => handleRoleChange('lecturer')}
-              />
-              Lecturer
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={role === 'student'}
-                onChange={() => handleRoleChange('student')}
-              />
-              Student
-            </label>
-          </div>
-          <button className="btn-3" type="submit" disabled={loading}>
-            Register
-          </button>
-        </form>
-        <div className="continue-with">
- <div><p></p> <span>or</span> <p></p></div>
-          <img
-            src={icon}
-            alt="google"
-            onClick={handleGoogleSignUp}
-            style={{ cursor: 'pointer' }}
-          />
-        </div>
-        <div className="already-have-an-account">
-          <p>
-            Already have an account?
-            <span>
-              {' '}
-              <a href="/login">Sign in</a>
-            </span>
-          </p>
-        </div>
-      </div>
+<form onSubmit={handleEmailPasswordSignUp}>
+  <div className="input-container">
+    <input
+      type="text"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      placeholder="Username"
+      required
+    />
+  </div>
+  <div className="input-container">
+    <input
+      type="email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      placeholder="Email"
+      required
+    />
+  </div>
+  <div className="input-container">
+    <input
+      type="password"
+      value={password}
+      onChange={(e) => {
+        setPassword(e.target.value);
+        checkPasswordStrength(e.target.value);
+      }}
+      placeholder="Password"
+      required
+    />
+    <div>
+      {passwordStrength && (
+        <small>{passwordStrength === 'Strong password' ? <span  style={{color: "green"}}>strong</span> : <span  style={{color: "red"}}>weak password</span> }</small>
+      )}
+    </div>
+  </div>
+  <div className="input-container">
+    <input
+      type="password"
+      value={confirmPassword}
+      onChange={(e) => setConfirmPassword(e.target.value)}
+      placeholder="Confirm Password"
+      required
+    />
+  </div>
+  <div className="input-container">
+  <select value={role} onChange={(e) => setRole(e.target.value)} required>
+    <option value="" disabled>Select Role</option>
+    <option value="lecturer">Lecturer</option>
+    <option value="student">Student</option>
+  </select>
+</div>
+
+  <button style={{margin: '10px'}} className="btn-3" type="submit" disabled={loading}>
+    Register
+  </button>
+</form>
+<div  style={{margin: '10px'}} className="continue-with">
+  <div>
+  <img src={facebook} alt="" />
+<p>Facebook</p>
+  </div>
+
+<div>
+<img src={google} alt="google" onClick={handleGoogleSignUp}
+    style={{ cursor: 'pointer' }}
+  />
+  <p>Google</p>
+</div>
+ 
+</div>
+</div>
+<p className='terms-and-co'>Terms and Conditions</p>
+    </div>
+    </div>
     </div>
   );
 };
 
 export default Register;
+
+

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import image from '../assets/mobile.svg';
-import icon from '../assets/googleicon.svg';
-import './login.css';
+import facebook from './facebook.svg';
+import featured from './feautured.svg';
+import google from './google.svg'
+import eclipse from './vector.svg'
 import {signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,getAdditionalUserInfo,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,9 @@ import { db , auth} from '../../config/config'; // Make sure to import your fire
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false); // 
+  // Loading state
+  
   const navigate = useNavigate();
 
   const handleEmailPasswordLogin = async (e) => {
@@ -84,77 +87,95 @@ const Login = () => {
     }
   };
 
-  return (
-    <div className="login-interface">
-      {isLoading && (
-        <div
-          className="spinner-overlay"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            zIndex: 9999,
-          }}
-        >
-          <CircularProgress style={{ color: '#D3A941' }} />
-        </div>
-      )}
+  const moveBack = () => {
+    navigate(-1);
+  }
 
-      <div className="login-image">
+ 
+   return (
+     <div  style={{
+          minHeight: "100dvh",
+        }} className="register-interface">
+          {isLoading && (
+            <div
+              className="spinner-overlay"
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                zIndex: 9999,
+              }}
+            >
+              <CircularProgress style={{ color: '#00CBCC' }} />
+            </div>
+          )}
+          <div onClick={moveBack} className='bacck-arrow'>
+          <img src={eclipse} alt="" />
+          </div>
+   
+        <div className="main-section">
+        <div className="featured-image-area">
+          <img src={featured} alt="" />
+        </div>
+        <div className="form-input-area">
+          <p className="top-area">Don't have an account? <a href="/register">signup</a></p>
+    <div className="signup-area">
+    <h1>Hi There!</h1>
+    <p>Welcome to eClassify</p>
+    
+    <form onSubmit={handleEmailPasswordLogin}>
       
+      <div className="input-container">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
       </div>
-      <h2>Welcome Back</h2>
-      <p>Please log in to an existing account</p>
-      <div className="login-form">
-        <form onSubmit={handleEmailPasswordLogin}>
-          <div className="input-container-login">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              required
-            />
-          </div>
-          <div className="input-container-login">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-              required
-            />
-          </div>
-          <p className="f-p">
-            <a href="/forgot-password">Forgot password?</a>
-          </p>
-          <button className="btn-3-3" type="submit" disabled={isLoading}>
-            Login
-          </button>
-        </form>
+      <div className="input-container">
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            checkPasswordStrength(e.target.value);
+          }}
+          placeholder="Password"
+          required
+        />
       </div>
-
-      <div className="continue-with">
- <div><p></p> <span>or</span> <p></p></div>
-          <img
-           src={icon}
-           alt="Google icon"
-           onClick={handleGoogleLogin}
-          />
-        </div>
-      <div className="no-acc">
-        <p className="p-3">
-          Don't have an account? <span><a href="/register">Sign up</a></span>
-        </p>
+      <button className="btn-3" type="submit" disabled={isLoading}>
+        Sign in
+      </button>
+    </form>
+    <div className="continue-with">
+      <div>
+      <img src={facebook} alt="" />
+    <p>Facebook</p>
       </div>
+    
+    <div>
+    <img src={google} alt="google" onClick={handleGoogleLogin}
+        style={{ cursor: 'pointer' }}
+      />
+      <p>Google</p>
     </div>
-  );
+     
+    </div>
+    </div>
+    <p className='terms-and-co'>Terms and Conditions</p>
+        </div>
+        </div>
+        </div>
+   );
 };
 
 export default Login;

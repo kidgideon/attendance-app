@@ -30,6 +30,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgetPassword />} />
         <Route path="/upload/:uid" element={<Upload />} />
         <Route path="/course/:id" element={<Course />} />
+        <Route path="Unboarding" element={<Unboarding />} />
         <Route path="/session/:courseId/:sessionId" element={<Session />} />
       </Routes>
     </Router>

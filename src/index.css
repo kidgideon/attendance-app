@@ -1,11 +1,9 @@
-
-*{
-    margin: 0px;
-    padding: 0px;
-}
-
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
     font-family: 'Poppins', sans-serif;
-    background-color:  black;
-    color: white;
+    font-size: 90%;
 }

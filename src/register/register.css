@@ -1,153 +1,182 @@
 .register-interface {
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-a:hover, a:visited, a:active {
-    color: inherit; /* Ensures the same color on all states */
-    text-decoration: none; /* Keeps it clean */
-  }
-
-.svg-area {
-     width: 100%;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     flex-direction: column;
-}
-
-.svg-area img {
-    width: 202px;
-    height: 152px;
-
-}
-
-.svg-area h2 {
-    margin: 1em;
-    font-size: 28px;
-}
-
-  .checkbox-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-  }
-  
-  .checkbox-container label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
-    color: white;
-  }
-  
-
-  .already-have-an-account  {
   width: 100%;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #EEEEEE;
+}
+.register-interface a {
+  color: black;
+}
 
-  .checkbox-container {
-    width: 10;
-  }
+.register-interface a::after {
+  color: black;
+}
+.main-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.featured-image-area, .form-input-area {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.featured-image-area {
+  width: 65%;
+}
+
+.featured-image-area img {
+  width: 500px;
+}
+
+.top-area, .terms-and-co {
+  width: 90%;
+  text-align: end;
+  color: rgb(184, 184, 184);
+}
+
+.form-input-area {
+  width: 45%;
+  background-color: white;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  min-height: 100dvh;
+}
+
+.main-section div form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.input-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.input-container input {
+  width: 300px;
+  height: 20px;
+  padding: 10px 25px;
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: #F7F7F7;
+}
+
+.input-container select {
+  width: 345px;
+  height: 40px;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: rgb(240, 240, 240);
+}
+
+.signup-area {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signup-area img {
+  width: 100px;
+}
 
 
-  .already-have-an-account p {
-    font-weight: bold;
-    width: 100%;
-    text-align: center;
-  }
+.btn-3 {
+  width: 250px;
+  height: 40px;
+  background-color: #00CBCC ;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  margin: 20px;
+}
 
-  .already-have-an-account p span {
-    color: #D3A941;
-  }
-
-  .continue-with {
-    width: 100%;
-    text-align: center;
-    margin: 3px;
-    font-size: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .continue-with div  {
-    width: 90%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-  }
-
-  .continue-with div p {
-    width: 80%; 
-    height: 2px;
-    background-color: gray;
-  }
-
-  .continue-with img {
-    width: 50px;
-    height: 50px;
-  }
+.continue-with {
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 20px;
+  margin-bottom: 10px;
+} 
 
 
-  .continue-with div span {
-    margin: 10px;
-  }
-  .form-area {
-    width: 86%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+.continue-with div {
+  width: 120px;
+  height: 40px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  border: 1px solid rgb(216, 216, 216);
+  font-size: 80%;
+  gap: 10px;
+}
 
-  form {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
+.continue-with div img {
+  width: 20px;
+}
 
-.btn-3{
-    background-color: rgb(255, 238, 0);
-    color: white;
-    height: 48px;
-    border-radius: 8px;
-    border: none;
-    margin: 10px;
-    width: 324px;
-    margin: 40px 0px;
-  }
+.terms-and-co {
+  position: fixed;
+  bottom: 0px;
+  right: 10px;
+}
 
-  .checkbox-container {
-     width: 90%;
-     max-width: 500px;
-  }
+.top-area {
+  position: fixed;
+  top: 0px;
+  right: 10px;
+}
 
-  .input-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin: 5px;
-  }
+.bacck-arrow {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  top: 10px;
+  left: 10px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+}
 
-  .input-container input {
-    width: 100%;
-    max-width: 500px;
-    height: 30px;
-    border-radius: 15px;
-    margin: 5px;
-    padding: 10px 15px;
-    border: none;
-    outline: none;
+.bacck-arrow img {
+  width: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-interface {
+  animation: fadeIn 0.5s ease-in-out;
+}

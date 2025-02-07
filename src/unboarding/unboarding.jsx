@@ -1,23 +1,34 @@
 import './unboarding.css'
-import image from '../assets/unboarding.jpg';
-
+import pattern from './pattern.svg'
+import Logo from './Logo.svg'
+import how from './how-it-works.svg'
 const Unboarding = () => {
     return(
     <div className="unboarding-interface">
-        <div className="top-area">
-<img src={image} alt="" />
-        </div>
-        <div className="bottom-area">
-            <div className='bottom-area-top'>
-            <h1>
-                Welcome to <br /> your web <br /> tracker
-            </h1>
+        <div style={{
+              backgroundImage: `url(${pattern})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}  className="unboarding-top-interface">
+            <div className="top-alignment-unboarding">
+<img src={Logo} alt="" />
+<div className="end-div">
+    <button>Create account</button>
+    <button>Log in</button>
+</div>
             </div>
-            <div className="bottom-area-bottom">
-            <button className='btn-1'>Create an account</button>   
-            <button className='btn-2'> Already have an account</button>        
-            </div>  
+
+            <div className="site-direction">
+    <div className="f-a">
+        <h1>E-classify-Smart <br /> Attendance, Smarter <br /> Education</h1>
+        <p>Track your Attendance effortlessly, stay <br /> updated and manage your classes with ease</p>
+    </div>
+    <div className='s-a'>
+  <img src={how} alt="" />
+    </div>
+</div>
         </div>
+
     </div>)
 }
 
