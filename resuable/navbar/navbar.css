@@ -1,0 +1,90 @@
+.navbar {
+     position: fixed;
+     top: 0px;
+     left: 0px;
+     bottom: 0px;
+     z-index: 100px;
+     width: 200px;
+     background-color: white;    
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     flex-direction: column;
+}
+
+.top-section-nav {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     flex-direction: row;
+     height: 20%;
+     gap: 10px;
+}
+
+.middle-section-nav { 
+    height: 50%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+     width: 80%;
+}
+
+.container-div {
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     flex-direction: row;
+     gap: 20px;
+}
+
+.img-div {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.middle-section-nav div p {
+    width: 70%;
+}
+
+
+
+.bottom-section-nav {
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
+}
+.bottom-section-nav div p {
+    width: 70%;
+}
+
+.top-section-nav img {
+     width: 30px;
+}
+
+.middle-section-nav img {
+     width: 23px;
+}
+
+.bottom-section-nav img {
+    width: 23px;
+}
+
+
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

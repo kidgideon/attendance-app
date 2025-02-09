@@ -4,6 +4,8 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../config/config';
 import { doc, getDoc} from 'firebase/firestore';
 import './ldashboard.css';
+import Navbar from '../../resuable/navbar/navbar';
+import Panel from '../../resuable/sidepanel/panel';
 
 const Lecturer = () => {
   const navigate = useNavigate();
@@ -108,81 +110,8 @@ const Lecturer = () => {
 
   return (
     <div className="lecturer-dashboard">
-      {/* Top Section */}
-      <div className="top-section-lecturer">
-        <div className="t-f-d">
-          <img
-            src={
-              lecturerData?.profilePicture ||
-              'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'
-            }
-            alt="Lecturer Profile"
-          />
-        </div>
-        <div className="t-m-d">eclassify</div>
-        <div className="t-l-d">
-          <i className="fa-regular fa-bell"></i>
-        </div>
-      </div>
-
-      {/* Middle Section */}
-      <div className="middle-div">
-        {loading ? (
-          <div className="middle-skeleton">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="course-skeleton">
-                <div className="skeleton color"></div>
-                <div className="skeleton details">
-                  <div className="line"></div>
-                  <div className="line short"></div>
-                  <div className="line short"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : courses.length === 0 ? (
-          <div className="no-courses">
-            <h1>HI, {lecturerData.username}</h1>
-            <p>Register courses</p>
-          </div>
-        ) : (
-          courses.map((course) => (
-            <div onClick={() => courseArea(course.courseId)} key={course.courseId} className="course-card">
-              <div className="course-card-color"></div>
-              <div className="course-details">
-                <h3 className="c-h4">{course.courseCode}</h3>
-                <p>{course.courseName}</p>
-                <p>{course.description}</p>
-              </div>
-              <div className="course-link">
-                <div>
-                  <i className="fa-solid fa-chevron-right"></i>
-                </div>
-                <div>
-                  <i className="fa-solid fa-trash"></i>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Footer Section */}
-      <div className="footer-l-d">
-        <span>
-          <i className="fa-solid fa-house"></i>
-          home
-        </span>
-        <Link to={`/upload/${currentUser?.uid}`}>
-          <div className="c-s-c-t">
-            <i className="fa-solid fa-plus"></i>
-          </div>
-        </Link>
-        <span>
-          <i className="fa-solid fa-gear"></i>
-          settings
-        </span>
-      </div>
+    <Navbar></Navbar>
+    <Panel></Panel>
     </div>
   );
 };
