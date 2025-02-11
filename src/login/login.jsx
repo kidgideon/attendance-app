@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import facebook from './facebook.svg';
 import featured from './feautured.svg';
 import google from './google.svg'
-import eclipse from './vector.svg'
+import eclipse from './Vector.svg'
 import {signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,getAdditionalUserInfo,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';

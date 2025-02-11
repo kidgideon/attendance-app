@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import facebook from './facebook.svg';
 import featured from './feautured.svg';
-import eclipse from './vector.svg'
+import eclipse from './Vector.svg'
 import google from './google.svg'
 import './register.css';
 import { auth, db } from '../../config/config';
