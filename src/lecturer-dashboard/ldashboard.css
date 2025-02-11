@@ -3,6 +3,19 @@
    justify-content: center;
    align-items: center;
    flex-direction: column;
+   width: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   background-color: #F7F7F7;
+   min-height: 100dvh;
+}
+
+.dashboard-area {
+  background-color: red;
+  width: 100%;
+
 }
 
 

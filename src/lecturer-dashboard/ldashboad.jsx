@@ -111,6 +111,12 @@ const Lecturer = () => {
   return (
     <div className="lecturer-dashboard">
     <Navbar></Navbar>
+   <div className="dashboard-area">
+     <div className="top-dashboard-area">
+      <p>Dahsboard</p>
+      <p>febuary 11 2025</p>
+     </div>
+   </div>
     <Panel></Panel>
     </div>
   );
