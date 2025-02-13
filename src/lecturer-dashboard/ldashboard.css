@@ -11,21 +11,341 @@
    background-color: #F7F7F7;
    min-height: 100dvh;
 }
-
 .dashboard-area {
-  background-color: red;
-  width: 100%;
+  position: absolute; /* Allows it to adjust dynamically */
+  left: 200px; /* Starts after Navbar */
+  right: 250px; /* Ends before Panel */
+  top: 0;
+  bottom: 0;
+  overflow-y: auto; /* Enables vertical scrolling */
+  overflow-x: hidden; /* Hides horizontal scrollbar */
+  padding: 20px;
+  background: #f9f9f9;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+}
 
+/* Custom vertical scrollbar */
+.dashboard-area::-webkit-scrollbar {
+  width: 6px;  /* Slim vertical scrollbar */
+}
+
+.dashboard-area::-webkit-scrollbar-thumb {
+  background: #00CBCC; /* Base color */
+  border-radius: 10px;  /* Rounded scrollbar */
+  height: 20px; /* Makes the scrollbar thumb shorter */
+}
+
+.dashboard-area::-webkit-scrollbar-track {
+  background: #F7F7F7; /* Light background */
+  border-radius: 10px;
+}
+
+.top-dashboard-area {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+}
+
+.user-welcome-field {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #00CBCC;
+  color: white;
+  border-radius: 5px;
+}
+
+.top-welcome-field {
+  width: 100%;
+  text-align: start;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.top-welcome-field p {
+  margin: 5px 20px;
+}
+
+.top-welcome-field img {
+  width: 30px;
+}
+
+.lecturer-info-desc {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 150px;
+}
+
+.the-info {
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: start;
+  width: 40%;
+  height: 100%;
+  padding-left: 20px;
+}
+
+.the-info h2 {
+  margin: 5px;
+}
+
+.the-image {
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+}
+
+.the-image img {
+  width: 220px;
+  margin-top: -50px;
+  margin-left: -20px;
+}
+
+.register-courses-prompt {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  margin-top: 15px;
+  min-height: 200px;
+}
+
+.register-courses-prompt h2 {
+  margin: 10px 20px;
+}
+
+.register-courses-prompt p {
+  margin: 10px 20px;
+}
+
+.register-courses-prompt button {
+  background-color: #005F73;
+  color: white;
+  width: 150px;
+  border-radius: 5px;
+  border: none;
+  height: 40px;
+  margin: 10px 20px;
+  cursor: pointer;
+}
+
+.directional-texts-ds {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction:row;
+  margin-top: 20px;
+  gap: 40px;
+}
+
+.instance{
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+  height: 320px;
+}
+
+.instance h3 {
+  height: 20%;
+}
+
+.instance p {
+  height: 40%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.instance img {
+  width: 200px;
+}
+
+.img-div-in {
+  height: 40%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.courses-available-area {
+  width: 100%;
+  height: 300px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
+  padding: 10px 0px;
+  border-radius: 10px;
+}
+
+.top-courses-available {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+align-items: center;
+}
+
+.courses-presented {
+  max-width: 840px;
+  width: 95%;
+  height: 200px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  overflow-x: auto;  /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent wrapping */
+  gap: 10px;
+  /* Hide vertical scrollbar */
+  overflow-y: hidden;
+  border-radius: 10px;
+}
+
+/* Custom scrollbar for modern look */
+.courses-presented::-webkit-scrollbar {
+  height: 6px;  /* Slim horizontal scrollbar */
+}
+
+.courses-presented::-webkit-scrollbar-thumb {
+  background: #00CBCC; /* Base color */
+  border-radius: 10px;  /* Rounded scrollbar */
+}
+
+.courses-presented::-webkit-scrollbar-track {
+  background: #F7F7F7; /* Light background */
+  border-radius: 10px;
+}
+
+.course-card {
+  width: 300px;
+  flex-shrink: 0; /* Prevent items from shrinking */
+  min-width: 300px;
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 10px;
+  color: white;
+  background: linear-gradient(270deg, #029E9F 37.78%, #028586 100%);
+  margin: 10px;
 }
 
 
-@keyframes fadeIn {
-   from {
-     opacity: 0;
-     transform: translateY(30px);
-   }
-   to {
-     opacity: 1;
-     transform: translateY(0);
-   }
- }
+
+.course-card h2, .course-card h3, .course-card h4 {
+  margin: 5px;
+}
+
+.course-card div {
+   width: 100%;
+   display: flex;
+   justify-content: end;
+   align-items: center;
+   color: white;
+ 
+}
+
+.history-div-if-any {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+  margin-top: 20px;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.history-area-top {
+   width: 95%;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+
+.course-history-display {
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.initial-table {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  background-color: #E3F3F3;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.history-itself {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  border-radius: 5px;
+  padding: 10px;
+  border-top: 1px solid lightgray;
+}
+
+.members {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.members img {
+  width: 20px;
+}
+
+.woman {
+  margin-left: -3px;
+}
+
+.amount-of-people {
+  background-color: #E3F3F3;
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

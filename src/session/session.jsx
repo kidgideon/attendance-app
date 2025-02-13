@@ -1,9 +1,12 @@
 import './session.css';
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../../config/config';
 import { doc, onSnapshot, updateDoc, getDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
+import Navbar from '../../resuable/navbar/navbar';
+import Panel from '../../resuable/sidepanel/panel';
+import { format } from 'date-fns';  // Import date-fns for date formatting
 
 const Session = () => {
   const { courseId, sessionId } = useParams();
@@ -65,27 +68,38 @@ const Session = () => {
     fetchParticipants();
   }, [session]);
 
+  const formattedDate = session?.date ? format(new Date(session.date), 'MMMM dd, yyyy HH:mm') : 'N/A';
   // Handle session status toggle (End Session)
   const handleEndSession = async () => {
     if (!course || !session) return;
-
+  
     const confirmEnd = window.confirm(
-      'Are you sure you want to end this session? This action cannot be undone.'
+      'Are you sure you want to end this session? This action cannot be undone, and no further attendance can be taken.'
     );
     if (!confirmEnd) return;
-
+  
     const courseDocRef = doc(db, 'courses', courseId);
+  
     try {
+      // Update session to mark it as inactive (ended)
       const updatedSessions = course.sessions.map((s) =>
         s.sessionId === sessionId ? { ...s, active: false } : s
       );
+  
+      // Update the course document to reflect the new session status
       await updateDoc(courseDocRef, { sessions: updatedSessions });
-      toast.success('Session ended successfully!');
+  
+      // Show success message
+      toast.success('Session ended successfully! No further attendance can be taken.');
+  
+      // After ending the session, ensure no further attendance can be signed
+      // You can also disable the "Attend Class" button on the student's dashboard here (if needed)
     } catch (error) {
       console.error('Error ending session:', error);
       toast.error('Failed to end session.');
     }
   };
+  
 
   // Handle printing of session details
   const handlePrint = () => {
@@ -117,7 +131,7 @@ const Session = () => {
               participants.length > 0
                 ? participants
                     .map(
-                      (participant, index) => `
+                      (participant, index) => ` 
                       <tr>
                         <td>${index + 1}</td>
                         <td>${participant.firstName} ${participant.lastName}</td>
@@ -141,82 +155,87 @@ const Session = () => {
     printWindow.print();
   };
 
+  // Handle copy session code
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(session?.code || '').then(() => {
+      toast.success('Session code copied to clipboard!');
+    }).catch((err) => {
+      toast.error('Failed to copy session code.');
+    });
+  };
+
   return (
     <div className="session-interface">
-      <div className="session-top-interface">
-        <p>{session?.name || 'Session Name'}</p>
-        {session?.active && (
-          <button onClick={handleEndSession}>End Session</button>
-        )}
-      </div>
+      <Navbar />
+      <div className="session-proper-area">
+        <div className="date-area">
+        <p>Class: {course?.name || 'N/A'}</p>
+        <p>Date: {formattedDate}</p>  {/* Display formatted date here */}
+        </div>
 
-      <div className="inactive-ative-area">
-        <div
-          className={`dot ${session?.active ? 'green-dot' : 'red-dot'}`}
-        ></div>
-        <p>{session?.active ? 'Active' : 'Inactive'}</p>
-      </div>
+        <div className="class-attendance-functions">
+          <p className="active-inactive-direction">
+            <span className={session?.active ? 'green-dot' : 'red-dot'}></span> 
+            <p>{session?.active ? 'Active' : 'Inactive'}</p>
+          </p>
 
-      <div className="session-code-area">
-        <h1>{session?.code || 'N/A'}</h1>
-        <p>Share with your students</p>
-      </div>
-
-      <div className="direction-partcipants">
-        <h3>
-          Session Participants ({participants.length || 0})
-        </h3>
-        <i className="fa-solid fa-print" onClick={handlePrint}></i>
-      </div>
-
-      <div className="participants">
-        {participants.length > 0 ? (
-          participants.map((participant, index) => (
-            <div className="participant" key={index}>
-              <div className="participant-image">
-                <img
-                  src={
-                    participant.profilePicture ||
-                    'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'
-                  }
-                  alt={`${participant.firstName || 'User'}'s profile`}
-                />
-              </div>
-              <div className="participant-details">
-                <p className="participant-name">
-                  {participant.firstName} {participant.lastName}
-                </p>
-                <p className="participant-mat-no">
-                  {participant.matricNumber || 'N/A'}
-                </p>
-              </div>
-              <div className="participant-link">
-                <a href={`/user/${participant.id}/stats`}>View Stats</a>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No participants have joined yet.</p>
-        )}
-      </div>
-
-      <div className="footer-l-d">
-        <span>
-          <i className="fa-solid fa-house"></i>
-          Home
-        </span>
-        <Link to={`/upload`}>
-          <div className="c-s-c-t">
-            <i className="fa-solid fa-plus"></i>
+          <div className="code-div">
+            <h1>{session?.code || 'N/A'}</h1>
+            <p>Share with your students</p>
           </div>
-        </Link>
-        <span>
-          <i className="fa-solid fa-gear"></i>
-          Settings
-        </span>
+
+          {session?.active && (
+            <div className="stop-div">
+              <button onClick={handleEndSession}>Stop Attendance</button>
+            </div>
+          )}
+        </div>
+
+        <div className="student-numb">
+          <h3>Class Attendance ({participants.length})</h3>
+          <p onClick={handlePrint}>
+            <i className="fa-solid fa-print"></i> Print
+          </p>
+        </div>
+
+        <div className="students-list">
+         
+
+<div className="students">
+<div className="student-profile-picture">
+  <img src="https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media" alt="" />
+</div>
+
+<div className="student-details">
+  <h3> Emmanuel chigozie</h3>
+  <p>Fuo/21/csi/16663</p>
+</div>
+
+<div className="student-statistic-link">
+  <a href=""> view statistics &gt;</a>
+</div>
+  </div>
+
+  <div className="students">
+<div className="student-profile-picture">
+  <img src="https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media" alt="" />
+</div>
+
+<div className="student-details">
+  <h3> Emmanuel chigozie</h3>
+  <p>Fuo/21/csi/16663</p>
+</div>
+
+<div className="student-statistic-link">
+  <a href=""> view statistics &gt;</a>
+</div>
+  </div>
+        </div>
       </div>
+      <Panel />
     </div>
   );
 };
 
 export default Session;
+

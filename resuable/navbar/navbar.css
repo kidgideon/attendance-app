@@ -29,14 +29,33 @@
     flex-direction: column;
      width: 80%;
 }
-
 .container-div {
-     width: 100%;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     flex-direction: row;
-     gap: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+    padding: 10px;
+    transition: background 0.3s ease;
+}
+
+/* Hover effect */
+.container-div:hover {
+    background: #F7F7F7;
+    color:  #00CBCC;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+}
+
+/* Highlight the current page */
+.container-div.highlight {
+    background: #F7F7F7;
+    color:  #00CBCC;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
 }
 
 .img-div {

@@ -1,66 +1,65 @@
- import './navbar.css'
- import logo from '../navbar/logo.svg'
- import settings from '../navbar/settings.svg'
- import logouticon from './logout.svg'
- import history from './history.svg'
- import dashboard from './dashboard.svg'
- import courses from './courses.svg'
- import registerCourse from './register-courses.svg'
- const Navbar = () => {
-    return(<div className="navbar">
-  <div className="top-section-nav">
-    <img src={logo} alt="" />
-    <h2>Eclassify</h2>
-  </div>
-  <div className="middle-section-nav">
-   <div className='container-div'>
-    <div className='img-div'>
-    <img src={dashboard} alt="" />
-    </div>
-    
-    <p>Dashboard</p>
-   </div>
+import './navbar.css';
+import { useState } from 'react';
+import logo from '../navbar/logo.svg';
+import settings from '../navbar/settings.svg';
+import logouticon from './logout.svg';
+import history from './history.svg';
+import dashboard from './dashboard.svg';
+import courses from './courses.svg';
+import registerCourse from './register-courses.svg';
+import hoverDashboard from './greenDashboard.svg';
+import hoverCourse from './greenCourse.svg';
+import hoverRegister from './greenRegister.svg';
+import hoverHistory from './greenHistory.svg';
 
-   <div className='container-div'>
-    <div className="img-div">
-    <img src={courses} alt="" />
-    </div>
-    <p>Courses</p>
-   </div>
+const Navbar = ({ currentPage, lecturerId }) => {
+  const [hoveredPage, setHoveredPage] = useState(null);
 
-   <div className='container-div'>
-    <div className="img-div">
-    <img src={registerCourse} alt="" />
-    </div>
-    <p>Register</p>
-   </div>
+  // Navigation items
+  const navItems = [
+    { id: 'lecturerDashboard', label: 'Dashboard', icon: dashboard, hoverIcon: hoverDashboard },
+    { id: 'coursesPage', label: 'Courses', icon: courses, hoverIcon: hoverCourse },
+    { id: 'registerPage', label: 'Register', icon: registerCourse, hoverIcon: hoverRegister },
+    { id: 'historyPage', label: 'History', icon: history, hoverIcon: hoverHistory }
+  ];
 
-   <div className='container-div'>
-    <div className="img-div">
-    <img src={history} alt="" />
-    </div>
-   
-    <p>History</p>
-   </div>
-
-  </div >
-  <div className="bottom-section-nav">
-    <div className='container-div'>
-        <div className="img-div">
-        <img src={settings} alt="" />
+  return (
+    <div className="navbar">
+      <div className="top-section-nav">
+        <img src={logo} alt="Eclassify Logo" />
+        <h2>Eclassify</h2>
+      </div>
+      <div className="middle-section-nav">
+        {navItems.map((item) => (
+          <div
+            key={item.id}
+            className={`container-div ${currentPage === item.id && hoveredPage !== item.id ? 'highlight' : ''}`}
+            onMouseEnter={() => setHoveredPage(item.id)}
+            onMouseLeave={() => setHoveredPage(null)}
+          >
+            <div className="img-div">
+              <img src={hoveredPage === item.id || currentPage === item.id ? item.hoverIcon : item.icon} alt={item.label} />
+            </div>
+            <p>{item.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="bottom-section-nav">
+        <div className="container-div">
+          <div className="img-div">
+            <img src={settings} alt="Settings" />
+          </div>
+          <p>Settings</p>
         </div>
-       
-        <p>Settings</p>
-    </div>
-
-    <div className='container-div'>
-        <div className="img-div">
-        <img src={logouticon} alt="" />
+        <div className="container-div">
+          <div className="img-div">
+            <img src={logouticon} alt="Logout" />
+          </div>
+          <p>Logout</p>
         </div>
-        <p>Logout</p>
+      </div>
     </div>
-  </div>
-    </div>)
-}
+  );
+};
 
 export default Navbar;

@@ -6,6 +6,8 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid'; // For generating a unique id
 import toast from 'react-hot-toast';
+import Navbar from '../../resuable/navbar/navbar';
+import Panel from '../../resuable/sidepanel/panel';
 
 const Course = () => {
   const { id } = useParams();
@@ -14,8 +16,11 @@ const Course = () => {
   const [user, setUser] = useState(null);
   const [course, setCourse] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [locationDialogOpen, setLocationDialogOpen] = useState(false); // For location confirmation
   const [loading, setLoading] = useState(false); // State for spinner
   const [activeSession, setActiveSession] = useState(null);
+  const [location, setLocation] = useState(null); // State for location
+  const [locationError, setLocationError] = useState(null); // To handle location errors
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -77,6 +82,12 @@ const Course = () => {
       return;
     }
 
+    if (!location) {
+      toast.error('Please enable location access to create the session!');
+      return;
+    }
+
+    // Create session only if location data is available
     const sessionId = uuidv4();
     const sessionCode = uuidv4().replace(/-/g, '').slice(0, 6);
 
@@ -89,6 +100,9 @@ const Course = () => {
       fullName: `${user.lastName} ${user.firstName}`,
       dateCreated: new Date().toISOString(),
       active: true,
+      moderator: `${user.firstName} ${user.lastName}`,
+      moderatorId: user.uid,
+      location: { latitude: location.latitude, longitude: location.longitude },
     };
 
     setLoading(true);
@@ -103,15 +117,39 @@ const Course = () => {
 
         await updateDoc(courseDocRef, { sessions: updatedSessions });
         toast.success('Session created successfully!');
-        setDialogOpen(false);
+        setLocationDialogOpen(false); // Close location dialog
+        setDialogOpen(false); // Close create session dialog
         navigate(`/session/${courseId}/${sessionId}`);
       } else {
         console.error('Course not found for session creation!');
       }
     } catch (error) {
       console.error('Error creating session:', error);
+      toast.error('There was an error creating the session. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          toast.success('Location retrieved successfully!');
+          setLocationDialogOpen(true); // Show session creation prompt
+        },
+        (error) => {
+          setLocationError(error.message);
+          toast.error('Location access denied. Please enable location access.');
+        }
+      );
+    } else {
+      setLocationError('Geolocation is not supported by this browser.');
+      toast.error('Geolocation is not supported by this browser.');
     }
   };
 
@@ -133,80 +171,105 @@ const Course = () => {
             zIndex: 9999,
           }}
         >
-          <CircularProgress style={{ color: '#D3A941' }} />
+          <CircularProgress style={{ color: '#00CBCC' }} />
         </div>
       )}
+      <Navbar />
+      <div className="course-area">
+        <div className="course-details-area">
+          <div className="details-themselves">
+            {course ? (
+              <>
+                <h2>{course.courseCode || 'No Course Code'}</h2>
+                <h3>{course.courseName || 'No Course Name'}</h3>
+                <h4>{course.description || 'No Description Available'}</h4>
+                
+      {/* Session Creation Button */}
+<div className="session-creation-btn">
+  {activeSession ? (
+    <button onClick={() => navigate(`/session/${courseId}/${activeSession.sessionId}`)}>
+      See Active Session
+    </button>
+  ) : (
+    <button onClick={() => setDialogOpen(true)}>
+      Create Session
+    </button>
+  )}
+</div>
 
-      <div className="higher-session">
-        <div className="course-interface-top-layer">
-          <p>{course ? course.courseName : 'Loading...'}</p>
-        </div>
-        <div className="course-body">
-          <div className="course-color-area">g</div>
-          <div className="course-i-details-interface">
-            <p className="c-i-c">{course ? course.courseCode : 'Loading...'}</p>
-            <p className="c-i-n">{course ? course.courseName : 'Loading...'}</p>
-            <p className="c-i-d">{course ? course.description : 'Loading...'}</p>
-            <div className="btn-c-5">
-              {(course?.admin === user?.uid || course?.moderators?.includes(user?.uid)) ? (
-                activeSession ? (
-                  <button onClick={() => navigate(`/session/${activeSession.sessionId}`)}>See Active Session</button>
-                ) : (
-                  <button onClick={() => setDialogOpen(true)}>Create Session</button>
-                )
-              ) : (
-                <p>checking permissions</p>
-              )}
-            </div>
+              </>
+            ) : (
+              <h4>Loading course details...</h4>
+            )}
           </div>
         </div>
-        <h4>Session History ({course?.sessions?.length || 0})</h4>
-      </div>
 
-      <div className="session-history">
-        {course?.sessions?.map((session, index) => (
-          <div className="past-session" onClick={() => navigate(`/session/${courseId}/${session.sessionId}`)} key={index}>
-            <div className="past-color-area">g</div>
-            <div className="course-details">
-              <p className="p-c-t-c">{session.courseCode}</p>
-              <p className="p-c-t-n">{session.courseName}</p>
-              <p className="p-c-d">{new Date(session.dateCreated).toLocaleDateString()}</p>
-              <div className="creator-name">
-                <p className="creator-name">{session.fullName}</p>
+        {/* Class History Section */}
+        <div className="class-history-section">
+          <h2 className="class-history-h1">Class History ({course?.sessions?.length || 0})</h2>
+          <div className="course-class-history-compiled">
+            {course?.sessions?.map((session) => (
+              <div key={session.sessionId} className="class-itself">
+                <h2>{session.students.length} students attended</h2>
+                <h3>Held on {new Date(session.dateCreated).toLocaleDateString()}</h3>
+                <h4>Moderated by {session.moderator}</h4>
+                <div className="see-mpre-det" onClick={() => navigate(`/session/${courseId}/${session.sessionId}`)}>
+                  <p>See details &gt;</p>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
 
-      <div className="footer-l-d">
-        <span>
-          <i className="fa-solid fa-house"></i> home
-        </span>
-        <Link to={`/upload`}>
-          <div className="c-s-c-t">
-            <i className="fa-solid fa-plus"></i>
-          </div>
-        </Link>
-        <span>
-          <i className="fa-solid fa-gear"></i> settings
-        </span>
+       
       </div>
+      <Panel />
 
+      {/* Location Confirmation Dialog */}
+      <Dialog open={locationDialogOpen} onClose={() => setLocationDialogOpen(false)}>
+        <DialogTitle>Confirm Location</DialogTitle>
+        <DialogContent>
+          <p>
+            You are about to create a session for this course. Do you want to proceed with the confirmed location?
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setLocationDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleCreateSession} color="primary" style={buttonStyle}>
+            Create Session
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Session Creation Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Confirm Session Creation</DialogTitle>
-        <DialogContent>Are you sure you want to create a new session for this course?</DialogContent>
+        <DialogTitle>Create Session</DialogTitle>
+        <DialogContent>
+          <p>You are about to create a session for your students. Please confirm your location first.</p>
+          <Button onClick={getLocation} variant="contained" style={buttonStyle}>
+            Confirm Location
+          </Button>
+          {locationError && <p style={{ color: 'red' }}>{locationError}</p>}
+        </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)} color="primary">
             Cancel
-          </Button>
-          <Button onClick={handleCreateSession} color="primary">
-            Create
           </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
+};
+
+const buttonStyle = {
+  backgroundColor: '#00CBCC',
+  color: 'white',
+  padding: '10px 15px',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
 };
 
 export default Course;
