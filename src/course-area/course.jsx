@@ -138,13 +138,27 @@ const Course = () => {
           setLocation({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy, // Capture accuracy
           });
-          toast.success('Location retrieved successfully!');
+  
+          console.log(`Location Accuracy: ${position.coords.accuracy} meters`);
+          
+          if (position.coords.accuracy > 20) {
+            toast.error(`Location might be inaccurate (${position.coords.accuracy}m).`);
+          } else {
+            toast.success('Location retrieved successfully!');
+          }
+  
           setLocationDialogOpen(true); // Show session creation prompt
         },
         (error) => {
           setLocationError(error.message);
           toast.error('Location access denied. Please enable location access.');
+        },
+        {
+          enableHighAccuracy: true, // Use GPS for better accuracy
+          timeout: 10000, // 10s timeout to wait for a precise fix
+          maximumAge: 0, // Prevents using cached location
         }
       );
     } else {
@@ -152,7 +166,7 @@ const Course = () => {
       toast.error('Geolocation is not supported by this browser.');
     }
   };
-
+  
   return (
     <div className="course-interface">
       {loading && (
