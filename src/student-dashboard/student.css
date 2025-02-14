@@ -1,0 +1,32 @@
+
+.student-area-official {
+    position: absolute; /* Allows it to adjust dynamically */
+    left: 200px; /* Starts after Navbar */
+    right: 250px; /* Ends before Panel */
+    top: 0;
+    bottom: 0;
+    overflow-y: auto; /* Enables vertical scrolling */
+    overflow-x: hidden; /* Hides horizontal scrollbar */
+    padding: 20px;
+    background: #f9f9f9;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  /* Custom vertical scrollbar */
+  .student-area-official::-webkit-scrollbar {
+    width: 6px;  /* Slim vertical scrollbar */
+  }
+  
+  .student-area-official::-webkit-scrollbar-thumb {
+    background: #00CBCC; /* Base color */
+    border-radius: 10px;  /* Rounded scrollbar */
+    height: 20px; /* Makes the scrollbar thumb shorter */
+  }
+  
+  .student-area-official::-webkit-scrollbar-track {
+    background: #F7F7F7; /* Light background */
+    border-radius: 10px;
+  }

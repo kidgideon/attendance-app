@@ -12,6 +12,8 @@ import Upload from "./upload/upload";
 import Course from "./course-area/course";
 import Session from "./session/session";
 import ProtectedRoute from "./protected-route/route";
+import LecturerCompleteProfile from "./lecturer-complete-profile/lProfile";
+import CompleteProfileStudent from "./student-complete-profile/cProfile";
 
 function App() {
   return (
@@ -22,9 +24,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/splash" element={<Splash />} />     
-        <Route path="/" element={ <ProtectedRoute> <Unboarding /></ProtectedRoute>
-  }
-/>
+<Route path="/" element={<ProtectedRoute> <Unboarding /></ProtectedRoute>}/>
         <Route path="/student/:uid" element={<Student />} />
         <Route path="/lecturer/:uid" element={<Lecturer />} />
         <Route path="/forgot-password" element={<ForgetPassword />} />
@@ -32,6 +32,8 @@ function App() {
         <Route path="/course/:id" element={<Course />} />
         <Route path="Unboarding" element={<Unboarding />} />
         <Route path="/session/:courseId/:sessionId" element={<Session />} />
+        <Route path="/student/complete-profile/:uid" element={<CompleteProfileStudent/>} />
+        <Route path="/lecturer/complete-profile/:uid" element={<LecturerCompleteProfile/>} />
       </Routes>
     </Router>
   );

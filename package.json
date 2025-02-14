@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "vite --host",
-  "build": "vite build",
-  "lint": "eslint .",
-  "preview": "vite preview",
-  "start": "vite preview" 
-},
+    "dev": "vite --host",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "vite preview"
+  },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -17,9 +17,11 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
+    "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "firebase": "^11.2.0",
     "framer-motion": "^12.0.6",
+    "geolib": "^3.3.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",

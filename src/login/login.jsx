@@ -18,80 +18,112 @@ const Login = () => {
   // Loading state
   
   const navigate = useNavigate();
-
   const handleEmailPasswordLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
+  
       if (!userCredential.user.emailVerified) {
         toast.error('Email not verified. Please verify your email to log in.');
         setIsLoading(false);
         return;
       }
-
-      // Fetch user role from Firestore
-      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid)); // Assuming you store user data under "users" collection
+  
+      // Fetch user role and profile details from Firestore
+      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
       const userData = userDoc.data();
-      
-      if (userData?.role === 'lecturer') {
-        navigate(`/lecturer/${userCredential.user.uid}`);
-      } else if (userData?.role === 'student') {
-        navigate(`/student/${userCredential.user.uid}`);
-      } else {
-        toast.error('Role not found!');
-        navigate('/home');
+  
+      if (!userData) {
+        toast.error("User data not found.");
+        navigate("/home");
+        return;
       }
-
-      toast.success('Login Successful!');
+  
+      // Lecturer Profile Check
+      if (userData.role === "lecturer") {
+        if (!userData.firstName || !userData.lastName) {
+          navigate(`/lecturer/complete-profile/${userCredential.user.uid}`);
+        } else {
+          navigate(`/lecturer/${userCredential.user.uid}`);
+        }
+      }
+      // Student Profile Check
+      else if (userData.role === "student") {
+        if (!userData.firstName || !userData.lastName || !userData.matriculationNumber) {
+          navigate(`/student/complete-profile/${userCredential.user.uid}`);
+        } else {
+          navigate(`/student/${userCredential.user.uid}`);
+        }
+      } else {
+        toast.error("Role not found!");
+        navigate("/home");
+      }
+  
+      toast.success("Login Successful!");
     } catch (error) {
-      console.error('Error signing in:', error);
-      toast.error('Error in sign-in');
+      console.error("Error signing in:", error);
+      toast.error("Error in sign-in");
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const isNewUser = getAdditionalUserInfo(result).isNewUser;
-
+  
       if (isNewUser) {
-        toast.error('No account found with this Google email. Please sign up first.');
-        navigate('/register'); // Redirect to signup page
+        toast.error("No account found with this Google email. Please sign up first.");
+        navigate("/register"); // Redirect to signup page
         return;
       }
-
-      const userDoc = await getDoc(doc(db, "users", result.user.uid)); // Assuming you store user data under "users" collection
+  
+      const userDoc = await getDoc(doc(db, "users", result.user.uid));
       const userData = userDoc.data();
-
-      if (userData?.role === 'lecturer') {
-        navigate(`/lecturer/${result.user.uid}`);
-      } else if (userData?.role === 'student') {
-        navigate(`/student/${result.user.uid}`);
-      } else {
-        toast.error('Role not found!');
-        navigate('/home');
+  
+      if (!userData) {
+        toast.error("User data not found.");
+        navigate("/home");
+        return;
       }
-
-      toast.success('Login Successful!');
+  
+      // Lecturer Profile Check
+      if (userData.role === "lecturer") {
+        if (!userData.firstName || !userData.lastName) {
+          navigate(`/lecturer/complete-profile/${result.user.uid}`);
+        } else {
+          navigate(`/lecturer/${result.user.uid}`);
+        }
+      }
+      // Student Profile Check
+      else if (userData.role === "student") {
+        if (!userData.firstName || !userData.lastName || !userData.matriculationNumber) {
+          navigate(`/student/complete-profile/${result.user.uid}`);
+        } else {
+          navigate(`/student/${result.user.uid}`);
+        }
+      } else {
+        toast.error("Role not found!");
+        navigate("/home");
+      }
+  
+      toast.success("Login Successful!");
     } catch (error) {
-      console.error('Error signing in with Google:', error);
-      toast.error('Google Sign-In Failed');
+      console.error("Error signing in with Google:", error);
+      toast.error("Google Sign-In Failed");
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   const moveBack = () => {
     navigate(-1);
   }
 
- 
    return (
      <div  style={{
           minHeight: "100dvh",

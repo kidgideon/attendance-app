@@ -23,9 +23,6 @@ const Register = () => {
   const [loading, setLoading] = useState(false); // Loading state
   const navigate = useNavigate();
 
-  const handleRoleChange = (newRole) => {
-    setRole((prevRole) => (prevRole === newRole ? '' : newRole));
-  };
 
   const checkUsernameAndEmail = async () => {
     const emailRef = await getDoc(doc(db, 'users', email));

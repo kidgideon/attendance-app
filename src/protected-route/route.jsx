@@ -7,54 +7,59 @@ import Splash from "../splash/splash.jsx";
 
 function ProtectedRoute({ children }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [checkedUser, setCheckedUser] = useState(false); // To ensure we process the auth user only once
   const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setIsLoading(true);
-      console.log("Auth state changed:", currentUser);
-
-      if (currentUser) {
-        const uid = currentUser.uid;
-        try {
-          const userDoc = await getDoc(doc(db, "users", uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            if (userData.role === "lecturer") {
-              navigate(`/lecturer/${uid}`);
-              return;
-            } else if (userData.role === "student") {
-              navigate(`/student/${uid}`);
-              return;
-            }
-          } else {
-            console.error("User document not found in Firestore.");
-          }
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-        }
+      if (!currentUser) {
+        setIsLoading(false);
+        return;
       }
 
-      // If no user or redirection occurred, stop loading
-      setCheckedUser(true);
+      const uid = currentUser.uid;
+      try {
+        const userDoc = await getDoc(doc(db, "users", uid));
+
+        if (!userDoc.exists()) {
+          console.error("User document not found in Firestore.");
+          setIsLoading(false);
+          return;
+        }
+
+        const userData = userDoc.data();
+        const { role, firstName, lastName, matriculationNumber } = userData;
+
+        if (role === "lecturer") {
+          if (!firstName || !lastName) {
+            navigate(`/lecturer/complete-profile/${uid}`);
+          } else {
+            navigate(`/lecturer/${uid}`);
+          }
+          return;
+        } 
+        
+        if (role === "student") {
+          if (!firstName || !lastName || !matriculationNumber) {
+            navigate(`/student/complete-profile/${uid}`);
+          } else {
+            navigate(`/student/${uid}`);
+          }
+          return;
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+
       setIsLoading(false);
     });
 
-    return () => unsubscribe(); // Clean up the auth listener on component unmount
+    return () => unsubscribe();
   }, [navigate]);
 
   if (isLoading) {
-    // Show a splash screen while authentication and role checks are ongoing
     return <Splash />;
   }
 
-  if (!checkedUser) {
-    // While waiting for the user check to complete, show nothing
-    return <Splash />;
-  }
-
-  // Render the protected component if no redirection occurred
   return children;
 }
 
