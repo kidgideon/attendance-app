@@ -24,7 +24,7 @@ const Session = () => {
           if (snapshot.exists()) {
             const courseData = snapshot.data();
             setCourse(courseData);
-
+        
             const currentSession = courseData.sessions.find(
               (s) => s.sessionId === sessionId
             );
@@ -66,40 +66,38 @@ const Session = () => {
     };
 
     fetchParticipants();
-  }, [session]);
+  }, [session?.students]);
 
   const formattedDate = session?.date ? format(new Date(session.date), 'MMMM dd, yyyy HH:mm') : 'N/A';
+
   // Handle session status toggle (End Session)
   const handleEndSession = async () => {
     if (!course || !session) return;
-  
+
     const confirmEnd = window.confirm(
       'Are you sure you want to end this session? This action cannot be undone, and no further attendance can be taken.'
     );
     if (!confirmEnd) return;
-  
+
     const courseDocRef = doc(db, 'courses', courseId);
-  
+
     try {
       // Update session to mark it as inactive (ended)
       const updatedSessions = course.sessions.map((s) =>
         s.sessionId === sessionId ? { ...s, active: false } : s
       );
-  
+
       // Update the course document to reflect the new session status
       await updateDoc(courseDocRef, { sessions: updatedSessions });
-  
+
       // Show success message
       toast.success('Session ended successfully! No further attendance can be taken.');
-  
-      // After ending the session, ensure no further attendance can be signed
-      // You can also disable the "Attend Class" button on the student's dashboard here (if needed)
+
     } catch (error) {
       console.error('Error ending session:', error);
       toast.error('Failed to end session.');
     }
   };
-  
 
   // Handle printing of session details
   const handlePrint = () => {
@@ -109,15 +107,16 @@ const Session = () => {
         <title>Session Attendance</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 20px; }
-          h1, h3 { text-align: center; }
+          h1, h3, h2, h1 { text-align: center; }
           table { width: 100%; border-collapse: collapse; margin: 20px 0; }
           th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
           th { background-color: #f4f4f4; }
         </style>
       </head>
       <body>
-        <h1>Course Name: ${course?.name || 'N/A'}</h1>
-        <h3>Session Name: ${session?.name || 'N/A'}</h3>
+       <h1> ${course?.courseCode || 'N/A'}</h1>
+         <h2> ${course?.courseName || 'N/A'}</h2>
+
         <table>
           <thead>
             <tr>
@@ -135,7 +134,7 @@ const Session = () => {
                       <tr>
                         <td>${index + 1}</td>
                         <td>${participant.firstName} ${participant.lastName}</td>
-                        <td>${participant.matricNumber || 'N/A'}</td>
+                        <td>${participant.matriculationNumber || 'N/A'}</td>
                       </tr>
                     `
                     )
@@ -169,8 +168,8 @@ const Session = () => {
       <Navbar />
       <div className="session-proper-area">
         <div className="date-area">
-        <p>Class: {course?.name || 'N/A'}</p>
-        <p>Date: {formattedDate}</p>  {/* Display formatted date here */}
+          <p> {course?.courseName || 'N/A'}</p>
+          <p>Date: {formattedDate}</p>
         </div>
 
         <div className="class-attendance-functions">
@@ -199,37 +198,26 @@ const Session = () => {
         </div>
 
         <div className="students-list">
-         
+          {participants.length > 0 ? (
+            participants.map((participant, index) => (
+              <div key={participant.uid} className="students">
+                <div className="student-profile-picture">
+                  <img src={participant.profilePicture || 'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'} alt="Student Profile" />
+                </div>
 
-<div className="students">
-<div className="student-profile-picture">
-  <img src="https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media" alt="" />
-</div>
+                <div className="student-details">
+                  <h3>{participant.firstName} {participant.lastName}</h3>
+                  <p>{participant.matriculationNumber || 'N/A'}</p>
+                </div>
 
-<div className="student-details">
-  <h3> Emmanuel chigozie</h3>
-  <p>Fuo/21/csi/16663</p>
-</div>
-
-<div className="student-statistic-link">
-  <a href=""> view statistics &gt;</a>
-</div>
-  </div>
-
-  <div className="students">
-<div className="student-profile-picture">
-  <img src="https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media" alt="" />
-</div>
-
-<div className="student-details">
-  <h3> Emmanuel chigozie</h3>
-  <p>Fuo/21/csi/16663</p>
-</div>
-
-<div className="student-statistic-link">
-  <a href=""> view statistics &gt;</a>
-</div>
-  </div>
+                <div className="student-statistic-link">
+                  <a href={`/student/statistics/${participant.uid}`}>view statistics &gt;</a>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p>No students currently attending.</p>
+          )}
         </div>
       </div>
       <Panel />
@@ -238,4 +226,3 @@ const Session = () => {
 };
 
 export default Session;
-
