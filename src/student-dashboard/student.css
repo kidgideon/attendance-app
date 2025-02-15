@@ -30,3 +30,69 @@
     background: #F7F7F7; /* Light background */
     border-radius: 10px;
   }
+
+  .attendance-sign-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .attendance-area {
+    width: 320px;
+    height: 480px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .attendance-area img {
+    width: 250px;
+  }
+
+  .attendance-area input {
+     padding: 10px 15px;
+  }
+.attendance-area p {
+  text-align:  center;
+}
+
+  .attendance-area button {
+     background-color: #00CBCC;
+     color: white;
+     padding: 10px 10px;
+     border: none;
+     border-radius: 3px;
+     margin-top: 20px;
+     cursor: pointer;
+  }
+
+  .direction-signs-area {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+    }
+
+    .direction-signs-area div {
+       border-radius: 20px;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       flex-direction: column;
+    }
+
+    .direction-signs-area div p {
+      width: 90%;
+      color: white;
+      font-size: 15px;
+    }
+
+  

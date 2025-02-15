@@ -245,9 +245,9 @@ align-items: center;
 }
 
 .course-card {
-  width: 300px;
+  width: 250px;
   flex-shrink: 0; /* Prevent items from shrinking */
-  min-width: 300px;
+  min-width: 250px;
   height: 150px;
   display: flex;
   justify-content: center;
@@ -258,6 +258,8 @@ align-items: center;
   color: white;
   background: linear-gradient(270deg, #029E9F 37.78%, #028586 100%);
   margin: 10px;
+  font-size: 95%;
+  cursor: pointer;
 }
 
 

@@ -211,7 +211,7 @@ const Session = () => {
                 </div>
 
                 <div className="student-statistic-link">
-                  <a href={`/student/statistics/${participant.uid}`}>view statistics &gt;</a>
+                  <a href={`/analysis/${course.courseId}/${participant.uid}`}>view statistics &gt;</a>
                 </div>
               </div>
             ))

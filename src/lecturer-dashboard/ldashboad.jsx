@@ -99,7 +99,7 @@ const Lecturer = () => {
 
   return (
     <div className="lecturer-dashboard">
-      <Navbar currentPage="lecturerDashboard" />
+      <Navbar currentPage="lecturerDashboard"  lecturerId={currentUser.uid}/>
 
       <div className="dashboard-area">
         <div className="top-dashboard-area">

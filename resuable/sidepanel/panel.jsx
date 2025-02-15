@@ -1,28 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./panel.css";
 import design from "./design.svg";
 import dp from "./defaultdp.svg";
-import { format, startOfMonth, endOfMonth, startOfWeek, addDays, isSameMonth, isSameDay, isToday, addMonths, subMonths } from "date-fns";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { 
+  format, startOfMonth, endOfMonth, startOfWeek, addDays, 
+  isSameMonth, isSameDay, isToday, addMonths, subMonths 
+} from "date-fns";
 import { IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 
 const Panel = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const renderHeader = () => {
-    return (
-      <div className="calendar-header">
-        <IconButton size="small" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
-          <ArrowBackIos fontSize="small" />
-        </IconButton>
-        <span className="calendar-month">{format(currentDate, "MMMM yyyy")}</span>
-        <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
-          <ArrowForwardIos fontSize="small" />
-        </IconButton>
-      </div>
-    );
-  };
+  const auth = getAuth();
+  const db = getFirestore();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userSnap = await getDoc(userDocRef);
+
+          if (userSnap.exists()) {
+            setUser(userSnap.data());
+          } else {
+            console.error("User data not found in Firestore.");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [auth, db]);
+
+  const renderHeader = () => (
+    <div className="calendar-header">
+      <IconButton size="small" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
+        <ArrowBackIos fontSize="small" />
+      </IconButton>
+      <span className="calendar-month">{format(currentDate, "MMMM yyyy")}</span>
+      <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+        <ArrowForwardIos fontSize="small" />
+      </IconButton>
+    </div>
+  );
 
   const renderDays = () => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -71,14 +101,18 @@ const Panel = () => {
     return <div className="calendar-grid">{rows}</div>;
   };
 
+  if (loading) {
+    return <div className="panel">Loading...</div>;
+  }
+
   return (
     <div className="panel">
       <div className="top-section-panel">
         <div className="user-image">
-          <img src={dp} alt="Profile" />
+          <img src={user?.profilePicture || dp} alt="Profile" />
         </div>
-        <p className="lecturer-name">Morrison Elvis</p>
-        <p className="lecturer-role">Lecturer</p>
+        <p className="lecturer-name">{user?.lastName || "Unknown User"} {user?.firstName || "Unknown User"}</p>
+        <p className="lecturer-role">{user?.role || "Lecturer"}</p>
         <button>Profile</button>
       </div>
 
@@ -91,7 +125,7 @@ const Panel = () => {
       </div>
 
       <div className="bottom-section-panel">
-        <img src={design} alt="" />
+        <img src={design} alt="Design" />
       </div>
     </div>
   );

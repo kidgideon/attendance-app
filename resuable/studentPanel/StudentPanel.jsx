@@ -1,36 +1,58 @@
-import React, { useState } from "react";
-import design from "./design.svg";
-import dp from "./defaultdp.svg";
+import React, { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { format, startOfMonth, endOfMonth, startOfWeek, addDays, isSameMonth, isSameDay, isToday, addMonths, subMonths } from "date-fns";
 import { IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 
+import design from "./design.svg";
+import defaultDp from "./defaultdp.svg"; 
+
 const StudentPanel = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [student, setStudent] = useState(null);
 
-  const renderHeader = () => {
-    return (
-      <div className="calendar-header">
-        <IconButton size="small" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
-          <ArrowBackIos fontSize="small" />
-        </IconButton>
-        <span className="calendar-month">{format(currentDate, "MMMM yyyy")}</span>
-        <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
-          <ArrowForwardIos fontSize="small" />
-        </IconButton>
-      </div>
-    );
-  };
+  const auth = getAuth();
+  const db = getFirestore();
+
+  // Fetch student data
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setStudent(userSnap.data());
+        } else {
+          console.log("User not found in Firestore");
+        }
+      } else {
+        setStudent(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [auth, db]);
+
+  const renderHeader = () => (
+    <div className="calendar-header">
+      <IconButton size="small" onClick={() => setCurrentDate(subMonths(currentDate, 1))}>
+        <ArrowBackIos fontSize="small" />
+      </IconButton>
+      <span className="calendar-month">{format(currentDate, "MMMM yyyy")}</span>
+      <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+        <ArrowForwardIos fontSize="small" />
+      </IconButton>
+    </div>
+  );
 
   const renderDays = () => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     return (
       <div className="calendar-days">
         {days.map((day, index) => (
-          <div key={index} className="calendar-day">
-            {day}
-          </div>
+          <div key={index} className="calendar-day">{day}</div>
         ))}
       </div>
     );
@@ -62,9 +84,7 @@ const StudentPanel = () => {
         day = addDays(day, 1);
       }
       rows.push(
-        <div key={day} className="calendar-row">
-          {days}
-        </div>
+        <div key={day} className="calendar-row">{days}</div>
       );
     }
     return <div className="calendar-grid">{rows}</div>;
@@ -74,10 +94,10 @@ const StudentPanel = () => {
     <div className="panel">
       <div className="top-section-panel">
         <div className="user-image">
-          <img src={dp} alt="Profile" />
+          <img src={student?.profilePicture || defaultDp} alt="Profile" />
         </div>
-        <p className="lecturer-name">Morrison Elvis</p>
-        <p className="lecturer-role">Lecturer</p>
+        <p className="lecturer-name">{student?.firstName || "Loading..."} {student?.lastName || "Loading..."}</p>
+        <p className="lecturer-role">{student?.role || "Student"}</p>
         <button>Profile</button>
       </div>
 

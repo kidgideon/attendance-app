@@ -1,0 +1,289 @@
+
+.student-details-panel {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    height: 400px;
+    min-height: 400px;
+}
+
+.hyh {
+    text-align: start;
+    width: 95%;
+
+}
+
+.val {
+    font-weight: bold;
+}
+
+.student-data-div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.student-img-div {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.student-img-div img {
+     width: 130px;
+     height: 130px;
+     border-radius: 100%;
+}
+
+
+.actually-data {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+}
+
+.data-divs {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: row;
+}
+
+.data-divs div {
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.data-divs div p {
+    margin: 5px;
+}
+
+.course-attendance-data {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: row;
+    padding-bottom: 20px;
+}
+
+.main-ai-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 200px;
+    border-radius: 8px;
+    background-color: #F9F9F9;
+    height: 70px;
+}
+
+.icon-div {
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 40px;
+    border-radius: 100%;
+    
+}
+
+.green {
+    background-color: #C5EAEA;
+    color: #00CBCC;
+}
+
+.purple {
+     background-color: #C5CEFA;
+     color: #5B6EC6;
+}
+
+.red {
+    background-color: #FFB8C0;
+    color: #FF001C;
+}
+
+.icon-div h4 {
+    font-weight: normal;
+}
+.atten-data-div {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.atten-data-div h3 , .atten-data-div p {
+    margin: 3px;
+}
+
+.atten-data-div p {
+    color: lightgray;
+}
+
+.graphical-representation-area {
+    display: flex;
+    align-items: center;
+    justify-content: space-betw;
+    gap: 20px;
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .graph-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background-color: white;
+  }
+  
+  .graph {
+    flex: 3;
+  }
+  
+  .percentage-circle {
+    width: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 20px;
+  }
+  
+  .no-data {
+    text-align: center;
+    color: #888;
+  }
+  .bold-percentage {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: white;
+  }
+  
+  .percent-area {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .progress-circle {
+    transform: rotate(-90deg); /* Ensures progress starts from the top */
+  }
+  
+  .progress-bar {
+    transition: stroke-dashoffset 0.6s ease-in-out;
+  }
+  
+  .progress-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+  }
+
+  .progress-text p {
+    margin: 0px;
+  }
+  
+  .actuall-text {
+    font-size: 25px;
+    font-weight: bold;
+    color: black;
+  }
+
+  .unreal-txt {
+    font-size: 80%;
+    color: lightgray;
+  }
+  .proper-percent-color-area {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    width: 100%;
+  }
+  
+  .color-box-and-direction {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+  }
+  
+  .color-grey {
+    width: 20px;
+    height: 20px;
+    background-color: gray;
+    margin: 10px;
+  }
+  
+  .color-green-box {
+    width: 20px;
+    height: 20px;
+    background-color: #00CBCC;
+    margin: 10px;
+  }
+  
+
+  .skeleton {
+    background: #e0e0e0;
+    border-radius: 4px;
+    animation: skeleton-loading 1.5s infinite ease-in-out;
+  }
+  
+  .skeleton-text {
+    width: 80%;
+    height: 15px;
+    margin: 5px 0;
+  }
+  
+  .skeleton-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+  }
+  
+  .skeleton-graph {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .skeleton-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+  
+  @keyframes skeleton-loading {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+  }
+  
