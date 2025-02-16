@@ -16,7 +16,8 @@ import LecturerCompleteProfile from "./lecturer-complete-profile/lProfile";
 import CompleteProfileStudent from "./student-complete-profile/cProfile";
 import CoursesPage from "./lecturer-dashboard/CoursesPage/CoursesPage";
 import LecturerHistory from "./lecturer-dashboard/History/history";
-import CourseRegister from "./lecturer-dashboard/register-courses/registerCourses";
+import CourseRegister from "./lecturer-dashboard/register-courses/registerCourses"; 
+// fixing this import
 import Analysis from "./Analysis/analysis";
 
 function App() {
