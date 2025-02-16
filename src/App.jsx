@@ -19,6 +19,9 @@ import LecturerHistory from "./lecturer-dashboard/History/history";
 import CourseRegister from "./lecturer-dashboard/register-courses/enroll";
 // fixing this import
 import Analysis from "./Analysis/analysis";
+import StudentCourse from "./student-dashboard/courses/scourse";
+import Studenthistory from "./student-dashboard/student-history/student-history";
+import StudentAnalysis from "./student-dashboard/student-analysis/studentanalysis";
 
 function App() {
   return (
@@ -43,7 +46,9 @@ function App() {
         <Route path="/student/complete-profile/:uid" element={<CompleteProfileStudent/>} />
         <Route path="/lecturer/complete-profile/:uid" element={<LecturerCompleteProfile/>} />
         <Route path="/analysis/:courseId/:studentId" element={<Analysis/>} />
-        
+        <Route path="/student/courses/:studentId" element={<StudentCourse/>} />
+        <Route path="/student/history/:studentId" element={<Studenthistory/>} />
+        <Route path="/student/analysis/:courseId/:studentId" element={<StudentAnalysis/>} />
       </Routes>
     </Router>
   );

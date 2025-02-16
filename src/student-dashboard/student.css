@@ -96,3 +96,63 @@
     }
 
   
+    .courses-area-for-students {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+  }
+  
+  .no-courses {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      color: red;
+  }
+  .skeleton-card-azm {
+    width: 100%;
+    height: 150px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #e0e0e0;
+    }
+    50% {
+        background-color: #d6d6d6;
+    }
+    100% {
+        background-color: #e0e0e0;
+    }
+}
+
+.courses-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr ;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.course-card-azm {
+    background-color: #00CBCC;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.course-card-azm:hover {
+    transform: scale(1.05);
+}
+
+.no-courses {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    color: red;
+}
