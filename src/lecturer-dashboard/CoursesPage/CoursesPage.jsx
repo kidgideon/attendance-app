@@ -1,74 +1,73 @@
-import './CP.css';
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { auth, db } from '../../../config/config';
-import { doc, getDoc, getDocs, collection } from 'firebase/firestore';
-import WelcomeDiv from '../../../resuable/WelcomeDiv/welcome';
-import Navbar from '../../../resuable/navbar/navbar';
-import Panel from '../../../resuable/sidepanel/panel';
+import "./CP.css";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { auth, db } from "../../../config/config";
+import { doc, getDoc } from "firebase/firestore";
+import WelcomeDiv from "../../../resuable/WelcomeDiv/welcome";
+import Navbar from "../../../resuable/navbar/navbar";
+import Panel from "../../../resuable/sidepanel/panel";
+
+const fetchCourses = async (userId) => {
+  if (!userId) return [];
+
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+
+    if (!userSnap.exists()) return [];
+
+    const userData = userSnap.data();
+    const courseIds = userData.courses || [];
+
+    if (courseIds.length === 0) return [];
+
+    const fetchedCourses = await Promise.all(
+      courseIds.map(async (courseId) => {
+        const courseRef = doc(db, "courses", courseId);
+        const courseSnap = await getDoc(courseRef);
+        return courseSnap.exists() ? { id: courseSnap.id, ...courseSnap.data() } : null;
+      })
+    );
+
+    return fetchedCourses.filter(Boolean).sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return [];
+  }
+};
 
 const CoursesPage = () => {
   const { uid } = useParams();
   const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(uid || auth.currentUser?.uid);
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      try {
-        const userId = uid || auth.currentUser?.uid;
-        if (!userId) return;
+    if (!userId) {
+      setUserId(auth.currentUser?.uid);
+    }
+  }, []);
 
-        // Get the user's document
-        const userRef = doc(db, 'users', userId);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          const courseIds = userData.courses || [];
-
-          if (courseIds.length > 0) {
-            // Fetch courses one by one to allow sorting
-            const coursesCollection = collection(db, 'courses');
-            const fetchedCourses = [];
-
-            for (const courseId of courseIds) {
-              const courseRef = doc(coursesCollection, courseId);
-              const courseSnap = await getDoc(courseRef);
-              if (courseSnap.exists()) {
-                fetchedCourses.push({ id: courseSnap.id, ...courseSnap.data() });
-              }
-            }
-
-            // Sort courses by dateCreated (newest first)
-            fetchedCourses.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-
-            setCourses(fetchedCourses);
-          } else {
-            setCourses([]);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-      }
-      setLoading(false);
-    };
-
-    fetchCourses();
-  }, [uid]);
+  // Fetch courses using React Query
+  const { data: courses, isLoading } = useQuery({
+    queryKey: ["courses", userId],
+    queryFn: () => fetchCourses(userId),
+    enabled: !!userId, // Runs only if userId is available
+    staleTime: 30 * 60 * 1000, // Cache for 30 minutes
+    cacheTime: 60 * 60 * 1000, // Keep in cache for 1 hour
+  });
 
   return (
     <div className="courses-page">
-      <Navbar currentPage="coursesPage" lecturerId={uid || auth.currentUser?.uid} />
+      <Navbar currentPage="coursesPage" lecturerId={userId} />
       <div className="dashboard-area">
         <WelcomeDiv />
         <div className="courses-area">
           <div className="courses-presented-course-section">
-            {loading ? (
+            {isLoading ? (
               <div className="skeleton-wrapper">
                 {[...Array(3)].map((_, index) => (
-                  <div key={index} className="skeleton-card"></div>
+                  <div key={index} className="skeleton-card skeleton-glow"></div>
                 ))}
               </div>
             ) : courses.length > 0 ? (

@@ -1,7 +1,8 @@
 import "./navbar.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
+import { useQuery } from "@tanstack/react-query";
 import logo from "../navbar/logo.svg";
 import settings from "../navbar/settings.svg";
 import logouticon from "./logout.svg";
@@ -14,28 +15,38 @@ import hoverCourse from "./greenCourse.svg";
 import hoverRegister from "./greenRegister.svg";
 import hoverHistory from "./greenHistory.svg";
 
-const Navbar = ({ currentPage }) => {
-  const [hoveredPage, setHoveredPage] = useState(null);
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
-  const auth = getAuth();
+const auth = getAuth();
 
-  useEffect(() => {
+const fetchUser = () => {
+  return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-      } else {
-        navigate("/login"); // Redirect if not logged in
-      }
+      unsubscribe();
+      resolve(currentUser || null);
     });
-    return () => unsubscribe();
-  }, [navigate]);
+  });
+};
+
+const Navbar = ({ currentPage }) => {
+  const navigate = useNavigate();
+  const [hoveredPage, setHoveredPage] = useState(null);
+
+  const { data: user } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: fetchUser,
+    staleTime: 1200000, // 20 minutes
+    cacheTime: 1200000, // 20 minutes
+  });
+
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
 
   const navItems = [
-    { id: "lecturerDashboard", label: "Dashboard", icon: dashboard, hoverIcon: hoverDashboard, link: `/lecturer/${user?.uid}` },
-    { id: "coursesPage", label: "Courses", icon: courses, hoverIcon: hoverCourse, link: `/courses/${user?.uid}` },
-    { id: "registerPage", label: "Register", icon: registerCourse, hoverIcon: hoverRegister, link: `/register-course/${user?.uid}` },
-    { id: "historyPage", label: "History", icon: history, hoverIcon: hoverHistory, link: `/course-history/${user?.uid}` },
+    { id: "lecturerDashboard", label: "Dashboard", icon: dashboard, hoverIcon: hoverDashboard, link: `/lecturer/${user.uid}` },
+    { id: "coursesPage", label: "Courses", icon: courses, hoverIcon: hoverCourse, link: `/courses/${user.uid}` },
+    { id: "registerPage", label: "Register", icon: registerCourse, hoverIcon: hoverRegister, link: `/register-course/${user.uid}` },
+    { id: "historyPage", label: "History", icon: history, hoverIcon: hoverHistory, link: `/course-history/${user.uid}` },
   ];
 
   const handleLogout = async () => {
@@ -74,7 +85,7 @@ const Navbar = ({ currentPage }) => {
       </div>
 
       <div className="bottom-section-nav">
-        <div className="container-div">
+        <div className="container-div" onClick={() => navigate(`/settings/lecturer/${user.uid}`)}>
           <div className="img-div">
             <img src={settings} alt="Settings" />
           </div>

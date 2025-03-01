@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
-import logo from '../navbar/logo.svg';
-import settings from '../navbar/settings.svg';
-import logouticon from './logout.svg';
-import history from './history.svg';
-import dashboard from './dashboard.svg';
-import courses from './courses.svg';
-import registerCourse from './register-courses.svg';
-import hoverDashboard from './greenDashboard.svg';
-import hoverCourse from './greenCourse.svg';
-import hoverRegister from './greenRegister.svg';
-import hoverHistory from './greenHistory.svg';
+import logo from "../navbar/logo.svg";
+import settings from "../navbar/settings.svg";
+import logouticon from "./logout.svg";
+import history from "./history.svg";
+import dashboard from "./dashboard.svg";
+import courses from "./courses.svg";
+import registerCourse from "./register-courses.svg";
+import hoverDashboard from "./greenDashboard.svg";
+import hoverCourse from "./greenCourse.svg";
+import hoverRegister from "./greenRegister.svg";
+import hoverHistory from "./greenHistory.svg";
 
 const StudentNavbar = ({ currentPage }) => {
   const [hoveredPage, setHoveredPage] = useState(null);
@@ -27,7 +27,7 @@ const StudentNavbar = ({ currentPage }) => {
         setStudentUid(user.uid);
       } else {
         setStudentUid(null);
-        navigate('/login'); // Redirect if not logged in
+        navigate("/login"); // Redirect if not logged in
       }
     });
 
@@ -37,9 +37,9 @@ const StudentNavbar = ({ currentPage }) => {
   // Navigation items (URLs depend on student UID)
   const navItems = studentUid
     ? [
-        { id: 'dashboard', label: 'Dashboard', icon: dashboard, hoverIcon: hoverDashboard, path: `/student/${studentUid}` },
-        { id: 'courses', label: 'Courses', icon: courses, hoverIcon: hoverCourse, path: `/student/courses/${studentUid}` },
-        { id: 'history', label: 'History', icon: history, hoverIcon: hoverHistory, path: `/student/history/${studentUid}` },
+        { id: "dashboard", label: "Dashboard", icon: dashboard, hoverIcon: hoverDashboard, path: `/student/${studentUid}` },
+        { id: "courses", label: "Courses", icon: courses, hoverIcon: hoverCourse, path: `/student/courses/${studentUid}` },
+        { id: "history", label: "History", icon: history, hoverIcon: hoverHistory, path: `/student/history/${studentUid}` },
       ]
     : [];
 
@@ -54,7 +54,7 @@ const StudentNavbar = ({ currentPage }) => {
         {navItems.map((item) => (
           <div
             key={item.id}
-            className={`container-div ${currentPage === item.id && hoveredPage !== item.id ? 'highlight' : ''}`}
+            className={`container-div ${currentPage === item.id && hoveredPage !== item.id ? "highlight" : ""}`}
             onMouseEnter={() => setHoveredPage(item.id)}
             onMouseLeave={() => setHoveredPage(null)}
             onClick={() => navigate(item.path)}
@@ -68,12 +68,14 @@ const StudentNavbar = ({ currentPage }) => {
       </div>
 
       <div className="bottom-section-nav">
-        <div className="container-div">
-          <div className="img-div">
-            <img src={settings} alt="Settings" />
+        {studentUid && (
+          <div className="container-div" onClick={() => navigate(`/settings/student/${studentUid}`)}>
+            <div className="img-div">
+              <img src={settings} alt="Settings" />
+            </div>
+            <p>Settings</p>
           </div>
-          <p>Settings</p>
-        </div>
+        )}
         <div className="container-div" onClick={() => auth.signOut()}>
           <div className="img-div">
             <img src={logouticon} alt="Logout" />

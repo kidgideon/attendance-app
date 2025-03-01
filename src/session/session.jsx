@@ -1,105 +1,83 @@
 import './session.css';
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '../../config/config';
-import { doc, onSnapshot, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
 import Navbar from '../../resuable/navbar/navbar';
 import Panel from '../../resuable/sidepanel/panel';
-import { format } from 'date-fns';  // Import date-fns for date formatting
+import { format } from 'date-fns';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+// Function to fetch session data
+const fetchCourseAndSession = async ({ queryKey }) => {
+  const [, courseId, sessionId] = queryKey;
+  const courseDocRef = doc(db, 'courses', courseId);
+  const courseSnapshot = await getDoc(courseDocRef);
+  
+  if (!courseSnapshot.exists()) {
+    throw new Error('Course not found');
+  }
+
+  const courseData = courseSnapshot.data();
+  const sessionData = courseData.sessions.find(s => s.sessionId === sessionId);
+
+  return { courseData, sessionData };
+};
+
+// Function to fetch participants
+const fetchParticipants = async (studentIds) => {
+  if (!studentIds || studentIds.length === 0) return [];
+  
+  const promises = studentIds.map(async (studentId) => {
+    const userDocRef = doc(db, 'users', studentId);
+    const userSnapshot = await getDoc(userDocRef);
+    return userSnapshot.exists() ? userSnapshot.data() : null;
+  });
+
+  const participants = await Promise.all(promises);
+  return participants.filter(user => user !== null);
+};
 
 const Session = () => {
   const { courseId, sessionId } = useParams();
   const navigate = useNavigate();
-  const [course, setCourse] = useState(null);
-  const [session, setSession] = useState(null);
-  const [participants, setParticipants] = useState([]);
 
-  // Fetch course and session data
-  useEffect(() => {
-    const fetchCourseAndSession = async () => {
-      try {
-        const courseDocRef = doc(db, 'courses', courseId);
-        const unsubscribeCourse = onSnapshot(courseDocRef, (snapshot) => {
-          if (snapshot.exists()) {
-            const courseData = snapshot.data();
-            setCourse(courseData);
-        
-            const currentSession = courseData.sessions.find(
-              (s) => s.sessionId === sessionId
-            );
-            setSession(currentSession);
-          } else {
-            toast.error('Course not found!');
-            navigate(-1);
-          }
-        });
+  // Fetch course & session data
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['session', courseId, sessionId],
+    queryFn: fetchCourseAndSession,
+  });
 
-        return () => unsubscribeCourse();
-      } catch (error) {
-        console.error('Error fetching course/session data:', error);
-      }
-    };
+  const course = data?.courseData;
+  const session = data?.sessionData;
 
-    fetchCourseAndSession();
-  }, [courseId, sessionId, navigate]);
+  // Fetch participants (only when session.students exist)
+  const { data: participants = [] } = useQuery({
+    queryKey: ['participants', session?.students],
+    queryFn: () => fetchParticipants(session?.students),
+    enabled: !!session?.students,  // Prevents unnecessary queries
+  });
 
-  // Fetch participants based on the students array
-  useEffect(() => {
-    const fetchParticipants = async () => {
-      if (session?.students?.length > 0) {
-        try {
-          const studentPromises = session.students.map(async (studentId) => {
-            const userDocRef = doc(db, 'users', studentId);
-            const userSnapshot = await getDoc(userDocRef);
-            return userSnapshot.exists() ? userSnapshot.data() : null;
-          });
+  // Mutation to end session
+  const endSessionMutation = useMutation({
+    mutationFn: async () => {
+      if (!course || !session) return;
+      const confirmEnd = window.confirm(
+        'Are you sure you want to end this session? This action cannot be undone.'
+      );
+      if (!confirmEnd) return;
 
-          const fetchedParticipants = await Promise.all(studentPromises);
-          setParticipants(fetchedParticipants.filter((user) => user !== null));
-        } catch (error) {
-          console.error('Error fetching participants:', error);
-        }
-      } else {
-        setParticipants([]);
-      }
-    };
-
-    fetchParticipants();
-  }, [session?.students]);
-
-  const formattedDate = session?.date ? format(new Date(session.date), 'MMMM dd, yyyy HH:mm') : 'N/A';
-
-  // Handle session status toggle (End Session)
-  const handleEndSession = async () => {
-    if (!course || !session) return;
-
-    const confirmEnd = window.confirm(
-      'Are you sure you want to end this session? This action cannot be undone, and no further attendance can be taken.'
-    );
-    if (!confirmEnd) return;
-
-    const courseDocRef = doc(db, 'courses', courseId);
-
-    try {
-      // Update session to mark it as inactive (ended)
-      const updatedSessions = course.sessions.map((s) =>
+      const courseDocRef = doc(db, 'courses', courseId);
+      const updatedSessions = course.sessions.map(s =>
         s.sessionId === sessionId ? { ...s, active: false } : s
       );
 
-      // Update the course document to reflect the new session status
       await updateDoc(courseDocRef, { sessions: updatedSessions });
+      toast.success('Session ended successfully!');
+    },
+  });
 
-      // Show success message
-      toast.success('Session ended successfully! No further attendance can be taken.');
-
-    } catch (error) {
-      console.error('Error ending session:', error);
-      toast.error('Failed to end session.');
-    }
-  };
-
-  // Handle printing of session details
+  // Handle Print Function
   const handlePrint = () => {
     const printContent = `
       <html>
@@ -107,16 +85,15 @@ const Session = () => {
         <title>Session Attendance</title>
         <style>
           body { font-family: Arial, sans-serif; margin: 20px; }
-          h1, h3, h2, h1 { text-align: center; }
+          h1, h2, h3 { text-align: center; }
           table { width: 100%; border-collapse: collapse; margin: 20px 0; }
           th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
           th { background-color: #f4f4f4; }
         </style>
       </head>
       <body>
-       <h1> ${course?.courseCode || 'N/A'}</h1>
-         <h2> ${course?.courseName || 'N/A'}</h2>
-
+        <h1>${course?.courseCode || 'N/A'}</h1>
+        <h2>${course?.courseName || 'N/A'}</h2>
         <table>
           <thead>
             <tr>
@@ -130,11 +107,11 @@ const Session = () => {
               participants.length > 0
                 ? participants
                     .map(
-                      (participant, index) => ` 
+                      (p, index) => ` 
                       <tr>
                         <td>${index + 1}</td>
-                        <td>${participant.firstName} ${participant.lastName}</td>
-                        <td>${participant.matriculationNumber || 'N/A'}</td>
+                        <td>${p.firstName} ${p.lastName}</td>
+                        <td>${p.matriculationNumber || 'N/A'}</td>
                       </tr>
                     `
                     )
@@ -154,21 +131,30 @@ const Session = () => {
     printWindow.print();
   };
 
-  // Handle copy session code
+  // Handle Copy Code
   const handleCopyCode = () => {
     navigator.clipboard.writeText(session?.code || '').then(() => {
       toast.success('Session code copied to clipboard!');
-    }).catch((err) => {
+    }).catch(() => {
       toast.error('Failed to copy session code.');
     });
   };
+
+  if (isLoading) return <p>Loading session...</p>;
+  if (error) {
+    toast.error(error.message);
+    navigate(-1);
+    return null;
+  }
+
+  const formattedDate = session?.date ? format(new Date(session.date), 'MMMM dd, yyyy HH:mm') : 'N/A';
 
   return (
     <div className="session-interface">
       <Navbar />
       <div className="session-proper-area">
         <div className="date-area">
-          <p> {course?.courseName || 'N/A'}</p>
+          <p>{course?.courseName || 'N/A'}</p>
           <p>Date: {formattedDate}</p>
         </div>
 
@@ -185,7 +171,7 @@ const Session = () => {
 
           {session?.active && (
             <div className="stop-div">
-              <button onClick={handleEndSession}>Stop Attendance</button>
+              <button onClick={() => endSessionMutation.mutate()}>Stop Attendance</button>
             </div>
           )}
         </div>
@@ -210,9 +196,10 @@ const Session = () => {
                   <p>{participant.matriculationNumber || 'N/A'}</p>
                 </div>
 
-                <div className="student-statistic-link">
-                  <a href={`/analysis/${course.courseId}/${participant.uid}`}>view statistics &gt;</a>
-                </div>
+             
+<div className="student-statistic-link">
+  <Link to={`/analysis/${course.courseId}/${participant.uid}`}>View Statistics &gt;</Link>
+</div>
               </div>
             ))
           ) : (

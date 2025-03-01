@@ -1,85 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import "./hp.css";
 import Navbar from "../../../resuable/navbar/navbar";
 import Panel from "../../../resuable/sidepanel/panel";
 import WelcomeDiv from "../../../resuable/WelcomeDiv/welcome";
 
-const LecturerHistory = () => {
-  const [sessions, setSessions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+const fetchHistory = async (userId, db) => {
+  if (!userId) return [];
 
+  try {
+    const lecturerDoc = await getDoc(doc(db, "users", userId));
+    if (!lecturerDoc.exists()) return [];
+
+    const lecturerData = lecturerDoc.data();
+    const courseIds = lecturerData.courses || [];
+
+    if (courseIds.length === 0) return [];
+
+    let allSessions = [];
+
+    for (const courseId of courseIds) {
+      const courseRef = doc(db, "courses", courseId);
+      const courseSnap = await getDoc(courseRef);
+
+      if (courseSnap.exists()) {
+        const courseData = courseSnap.data();
+        const courseSessions = courseData.sessions || [];
+
+        courseSessions.forEach((session) => {
+          allSessions.push({
+            ...session,
+            courseId,
+            courseName: courseData.courseName,
+            courseCode: courseData.courseCode,
+            members: session.students.length,
+          });
+        });
+      }
+    }
+
+    return allSessions.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
+  } catch (error) {
+    console.error("Error fetching lecturer history:", error);
+    return [];
+  }
+};
+
+const LecturerHistory = () => {
+  const navigate = useNavigate();
   const auth = getAuth();
   const db = getFirestore();
+  const [userId, setUserId] = useState(auth.currentUser?.uid);
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      setLoading(true);
+    if (!userId) {
+      setUserId(auth.currentUser?.uid);
+    }
+  }, []);
 
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
-
-        // Get the lecturer's data
-        const lecturerDoc = await getDoc(doc(db, "users", user.uid));
-        if (!lecturerDoc.exists()) {
-          console.error("Lecturer data not found.");
-          setLoading(false);
-          return;
-        }
-
-        const lecturerData = lecturerDoc.data();
-        const courseIds = lecturerData.courses || [];
-
-        if (courseIds.length === 0) {
-          console.log("Lecturer has no courses.");
-          setLoading(false);
-          return;
-        }
-
-        let allSessions = [];
-
-        // Fetch courses and extract sessions
-        for (const courseId of courseIds) {
-          const courseRef = doc(db, "courses", courseId);
-          const courseSnap = await getDoc(courseRef);
-
-          if (courseSnap.exists()) {
-            const courseData = courseSnap.data();
-            const courseSessions = courseData.sessions || [];
-
-            courseSessions.forEach((session) => {
-              allSessions.push({
-                ...session,
-                courseId: courseId, // Store the courseId for navigation
-                courseName: courseData.courseName,
-                courseCode: courseData.courseCode,
-                members: session.students.length, // Count students in session
-              });
-            });
-          }
-        }
-
-        // Sort sessions by dateCreated (newest first)
-        allSessions.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-
-        setSessions(allSessions);
-      } catch (error) {
-        console.error("Error fetching lecturer history:", error);
-      }
-
-      setLoading(false);
-    };
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) fetchHistory();
-    });
-
-    return () => unsubscribe();
-  }, [auth, db]);
+  const { data: sessions, isLoading } = useQuery({
+    queryKey: ["lecturerHistory", userId],
+    queryFn: () => fetchHistory(userId, db),
+    enabled: !!userId,
+    staleTime: 30 * 60 * 1000, // Cache for 30 minutes
+    cacheTime: 60 * 60 * 1000, // Keep cached for 1 hour
+  });
 
   return (
     <div className="history-of-everything">
@@ -92,8 +80,12 @@ const LecturerHistory = () => {
           </div>
 
           <div className="history-table-container">
-            {loading ? (
-              <p className="loading">Loading history...</p>
+            {isLoading ? (
+              <div className="skeleton-history-wrapper">
+                {[...Array(3)].map((_, index) => (
+                  <div key={index} className="skeleton-history-row skeleton-glow"></div>
+                ))}
+              </div>
             ) : sessions.length === 0 ? (
               <p className="no-history">No session history found.</p>
             ) : (

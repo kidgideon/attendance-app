@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { db } from "../../config/config"; // Adjust if necessary
+import { db } from "../../config/config"; 
 import { doc, getDoc } from "firebase/firestore";
+import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../resuable/navbar/navbar";
 import Panel from "../../resuable/sidepanel/panel";
 import { Line } from "react-chartjs-2";
-import './analysis.css'
+import "./analysis.css";
 import {
   Chart as ChartJS,
   LineElement,
@@ -20,49 +20,47 @@ import {
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, Filler, CategoryScale);
 
+// Fetch course data and attendance records
+const fetchCourseData = async ({ queryKey }) => {
+  const [, courseId, studentId] = queryKey;
+  const courseRef = doc(db, "courses", courseId);
+  const courseSnap = await getDoc(courseRef);
+
+  if (!courseSnap.exists()) throw new Error("Course not found");
+
+  const courseData = courseSnap.data();
+  const sessions = courseData.sessions || [];
+
+  let totalClasses = sessions.length;
+  let totalAttended = sessions.filter(session => session.students.includes(studentId)).length;
+  let totalAbsent = totalClasses - totalAttended;
+  let percentage = totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 0;
+
+  return { totalClasses, totalAttended, totalAbsent, percentage: percentage.toFixed(1), sessions };
+};
+
+// Fetch student data
+const fetchStudentData = async ({ queryKey }) => {
+  const [, studentId] = queryKey;
+  const userRef = doc(db, "users", studentId);
+  const userSnap = await getDoc(userRef);
+  return userSnap.exists() ? userSnap.data() : null;
+};
+
 const Analysis = () => {
   const { courseId, studentId } = useParams();
-  const [studentData, setStudentData] = useState(null);
-  const [attendanceData, setAttendanceData] = useState(null); // Initially null to track loading state
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch course details
-        const courseRef = doc(db, "courses", courseId);
-        const courseSnap = await getDoc(courseRef);
+  // Fetch course and attendance data
+  const { data: attendanceData, isLoading: isAttendanceLoading } = useQuery({
+    queryKey: ["courseData", courseId, studentId],
+    queryFn: fetchCourseData,
+  });
 
-        if (courseSnap.exists()) {
-          const courseData = courseSnap.data();
-          const sessions = courseData.sessions || [];
-
-          let totalClasses = sessions.length;
-          let totalAttended = sessions.filter(session => session.students.includes(studentId)).length;
-          let totalAbsent = totalClasses - totalAttended;
-          let percentage = totalClasses > 0 ? (totalAttended / totalClasses) * 100 : 0;
-
-          setAttendanceData({
-            totalClasses,
-            totalAttended,
-            totalAbsent,
-            percentage: percentage.toFixed(1),
-            sessions,
-          });
-        }
-
-        // Fetch student details from "users" collection
-        const userRef = doc(db, "users", studentId);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setStudentData(userSnap.data());
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [courseId, studentId]);
+  // Fetch student details
+  const { data: studentData, isLoading: isStudentLoading } = useQuery({
+    queryKey: ["studentData", studentId],
+    queryFn: fetchStudentData,
+  });
 
   const attendanceValues = attendanceData?.sessions?.map(session =>
     session.students.includes(studentId) ? 1 : 0
@@ -120,78 +118,61 @@ const Analysis = () => {
 
           <div className="student-data-div">
             <div className="student-img-div">
-              {studentData ? (
+              {isStudentLoading ? (
+                <div className="skeleton skeleton-img"></div>
+              ) : (
                 <img
-                  src={studentData.profilePicture || "https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media"}
+                  src={studentData?.profilePicture || "https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media"}
                   alt="Student"
                 />
-              ) : (
-                <div className="skeleton skeleton-img"></div>
               )}
             </div>
 
             <div className="actually-data">
-              <h1>{studentData ? `${studentData.firstName} ${studentData.lastName}` : <div className="skeleton skeleton-text"></div>}</h1>
+              <h1>{isStudentLoading ? <div className="skeleton skeleton-text"></div> : `${studentData?.firstName} ${studentData?.lastName}`}</h1>
               <div className="data-divs">
                 <div>
                   <p>Matric Number</p>
-                  {studentData ? <p className="val">{studentData.matriculationNumber}</p> : <div className="skeleton skeleton-text"></div>}
+                  {isStudentLoading ? <div className="skeleton skeleton-text"></div> : <p className="val">{studentData?.matriculationNumber}</p>}
                 </div>
                 <div>
                   <p>Email</p>
-                  {studentData ? <p className="val">{studentData.email}</p> : <div className="skeleton skeleton-text"></div>}
+                  {isStudentLoading ? <div className="skeleton skeleton-text"></div> : <p className="val">{studentData?.email}</p>}
                 </div>
               </div>
             </div>
           </div>
 
           <div className="course-attendance-data">
-  <div className="main-ai-div">
-    <div className="icon-div green">
-      <i className="fa-regular fa-user"></i>
-    </div>
-    <div className="atten-data-div">
-      <h3>{attendanceData?.totalAttended ?? 0} classes</h3>
-      <p>Total attendance</p>
-    </div>
-  </div>
+            {["Total Attended", "Total Classes", "Total Absent"].map((title, index) => {
+              const icons = ["fa-user green", "fa-chart-simple purple", "fa-circle-xmark red"];
+              const values = [attendanceData?.totalAttended, attendanceData?.totalClasses, attendanceData?.totalAbsent];
 
-  <div className="main-ai-div">
-    <div className="icon-div purple">
-      <i className="fa-solid fa-chart-simple"></i>
-    </div>
-    <div className="atten-data-div">
-      <h3>{attendanceData?.totalClasses ?? 0} classes</h3>
-      <p>Total classes</p>
-    </div>
-  </div>
-
-  <div className="main-ai-div">
-    <div className="icon-div red">
-      <i className="fa-regular fa-circle-xmark"></i>
-    </div>
-    <div className="atten-data-div">
-      <h3>{attendanceData?.totalAbsent ?? 0} classes</h3>
-      <p>Total absent</p>
-    </div>
-  </div>
-</div>
-
-
+              return (
+                <div className="main-ai-div" key={index}>
+                  <div className={`icon-div ${icons[index]}`}>
+                    <i className={`fa-regular ${icons[index]}`}></i>
+                  </div>
+                  <div className="atten-data-div">
+                    <h3>{isAttendanceLoading ? <div className="skeleton skeleton-text"></div> : `${values[index]} classes`}</h3>
+                    <p>{title}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="graphical-representation-area">
           <div className="graph-container">
             <div className="graph">
-              {attendanceData ? (
-                <Line data={graphData} options={chartOptions} />
-              ) : (
-                <div className="skeleton skeleton-graph"></div>
-              )}
+              {isAttendanceLoading ? <div className="skeleton skeleton-graph"></div> : <Line data={graphData} options={chartOptions} />}
             </div>
 
             <div className="percentage-circle">
-              {attendanceData ? (
+              {isAttendanceLoading ? (
+                <div className="skeleton skeleton-circle"></div>
+              ) : (
                 <div className="bold-percentage">
                   <div className="percent-area">
                     <svg width="150" height="150" viewBox="0 0 100 100" className="progress-circle">
@@ -204,19 +185,17 @@ const Analysis = () => {
                         strokeWidth="10"
                         fill="none"
                         strokeDasharray="283"
-                        strokeDashoffset={`${283 - (attendanceData.percentage / 100) * 283}`}
+                        strokeDashoffset={`${283 - (attendanceData?.percentage / 100) * 283}`}
                         strokeLinecap="round"
                         className="progress-bar"
                       />
                     </svg>
                     <div className="progress-text">
-                      <p className="actuall-text">{attendanceData.percentage}%</p>
+                      <p className="actuall-text">{attendanceData?.percentage}%</p>
                       <p className="unreal-txt">Attendance</p>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="skeleton skeleton-circle"></div>
               )}
             </div>
           </div>

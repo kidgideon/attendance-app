@@ -1,40 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { auth, db } from "../../config/config"; // Import initialized auth & db
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../config/config"; // Import initialized auth & db
+import { useQuery } from "@tanstack/react-query";
 import "./welc.css";
 import svgImage from "./wel.svg";
 
+// Fetch user data from Firestore
+const fetchStudentData = async (userId) => {
+  if (!userId) return null;
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+  return userSnap.exists() ? userSnap.data() : null;
+};
+
 const StudentWelcome = () => {
-  const [student, setStudent] = useState(null);
+  // Get the authenticated user ID
+  const { data: userId } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: () =>
+      new Promise((resolve) => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+          resolve(user?.uid || null);
+        });
+        return () => unsubscribe();
+      }),
+    staleTime: Infinity, 
+    cacheTime: Infinity,
+  });
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setStudent(userSnap.data());
-        } else {
-          console.log("User not found in Firestore");
-        }
-      } else {
-        setStudent(null);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
+  // Fetch student data from Firestore (cached for 20 minutes)
+  const { data: student, isLoading } = useQuery({
+    queryKey: ["studentData", userId],
+    queryFn: () => fetchStudentData(userId),
+    enabled: !!userId,
+    staleTime: 20 * 60 * 1000, 
+    cacheTime: 30 * 60 * 1000,
+  });
 
   return (
     <div className="welcome-div">
       <img src={svgImage} alt="Classroom" className="welcome-image" />
       <div className="left-area">
         <h1>
-          <span className="highlight">Hello,</span> {student?.firstName || "Loading..."} {student?.lastName || ""}
+          <span className="highlight">Hello,</span> {isLoading ? "Loading..." : `${student?.firstName || "User"} ${student?.lastName || ""}`}
         </h1>
         <p>
-        We're excited to have you on board! Here, you can easily manage your courses, track your learning progress, and stay organized with your schedule.
+          We're excited to have you on board! Here, you can easily manage your courses, track your learning progress, and stay organized with your schedule.
         </p>
       </div>
     </div>

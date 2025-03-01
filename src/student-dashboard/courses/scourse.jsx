@@ -2,15 +2,36 @@ import './scourse.css';
 import StudentNavbar from '../../../resuable/studentNavbar/StudentsNavbar';
 import StudentPanel from '../../../resuable/studentPanel/StudentPanel';
 import StudentWelcome from '../../../resuable/student-welcome/welcomeDivStudent';
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { auth, db } from "../../../config/config";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchCourses = async (studentId) => {
+    if (!studentId) return [];
+
+    const studentRef = doc(db, "users", studentId);
+    const studentSnap = await getDoc(studentRef);
+
+    if (!studentSnap.exists()) throw new Error("Student not found");
+
+    const studentData = studentSnap.data();
+    const courseIds = studentData.courses || [];
+
+    if (courseIds.length === 0) return [];
+
+    const coursePromises = courseIds.map(async (courseId) => {
+        const courseRef = doc(db, "courses", courseId);
+        const courseSnap = await getDoc(courseRef);
+        return courseSnap.exists() ? { id: courseId, ...courseSnap.data() } : null;
+    });
+
+    return (await Promise.all(coursePromises)).filter(Boolean);
+};
 
 const StudentCourse = () => {
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [studentId, setStudentId] = useState(null);
     const navigate = useNavigate();
 
@@ -20,53 +41,18 @@ const StudentCourse = () => {
                 setStudentId(user.uid);
             } else {
                 setStudentId(null);
-                setCourses([]);
             }
         });
 
         return () => unsubscribe();
     }, []);
 
-    useEffect(() => {
-        if (!studentId) return;
-
-        const fetchCourses = async () => {
-            setLoading(true);
-            try {
-                const studentRef = doc(db, "users", studentId);
-                const studentSnap = await getDoc(studentRef);
-
-                if (!studentSnap.exists()) {
-                    console.error("Student not found");
-                    setCourses([]);
-                    return;
-                }
-
-                const studentData = studentSnap.data();
-                const courseIds = studentData.courses || [];
-
-                if (courseIds.length === 0) {
-                    setCourses([]);
-                    return;
-                }
-
-                const coursePromises = courseIds.map(async (courseId) => {
-                    const courseRef = doc(db, "courses", courseId);
-                    const courseSnap = await getDoc(courseRef);
-                    return courseSnap.exists() ? { id: courseId, ...courseSnap.data() } : null;
-                });
-
-                const courseData = (await Promise.all(coursePromises)).filter(course => course !== null);
-                setCourses(courseData);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCourses();
-    }, [studentId]);
+    const { data: courses = [], isLoading, isError } = useQuery({
+        queryKey: ["studentCourses", studentId],
+        queryFn: () => fetchCourses(studentId),
+        enabled: !!studentId,
+        staleTime: 10 * 60 * 1000, // Cache for 10 minutes
+    });
 
     return (
         <div className='student-courses-div'>
@@ -79,12 +65,14 @@ const StudentCourse = () => {
                 </div>
 
                 <div className="courses-area-for-students">
-                    {loading ? (
+                    {isLoading ? (
                         <div className="courses-grid">
                             {[...Array(6)].map((_, index) => (
-                                <div key={index} className=" skeleton-card-azm"></div>
+                                <div key={index} className="skeleton-card-azm"></div>
                             ))}
                         </div>
+                    ) : isError ? (
+                        <p className="error-message">Failed to load courses. Please try again.</p>
                     ) : courses.length === 0 ? (
                         <p className="no-courses">No courses yet</p>
                     ) : (
