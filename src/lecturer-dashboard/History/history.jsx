@@ -7,6 +7,7 @@ import "./hp.css";
 import Navbar from "../../../resuable/navbar/navbar";
 import Panel from "../../../resuable/sidepanel/panel";
 import WelcomeDiv from "../../../resuable/WelcomeDiv/welcome";
+import hamburger from "../../../resuable/navbar/hamburger.svg";
 
 const fetchHistory = async (userId, db) => {
   if (!userId) return [];
@@ -54,12 +55,23 @@ const LecturerHistory = () => {
   const auth = getAuth();
   const db = getFirestore();
   const [userId, setUserId] = useState(auth.currentUser?.uid);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
 
   useEffect(() => {
     if (!userId) {
       setUserId(auth.currentUser?.uid);
     }
   }, []);
+
+     
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
 
   const { data: sessions, isLoading } = useQuery({
     queryKey: ["lecturerHistory", userId],
@@ -71,7 +83,10 @@ const LecturerHistory = () => {
 
   return (
     <div className="history-of-everything">
-      <Navbar currentPage={"historyPage"} />
+      <Navbar isOpen={isNavbarOpen} currentPage={"historyPage"} />
+       <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
+       {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
       <div className="dashboard-area">
         <WelcomeDiv />
         <div className="history-div-if-any">

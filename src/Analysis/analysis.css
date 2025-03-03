@@ -80,6 +80,7 @@
     align-items: center;
     flex-direction: row;
     padding-bottom: 20px;
+
 }
 
 .main-ai-div {
@@ -107,16 +108,28 @@
 .green {
     background-color: #C5EAEA;
     color: #00CBCC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 .purple {
      background-color: #C5CEFA;
      color: #5B6EC6;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     
 }
 
 .red {
     background-color: #FFB8C0;
     color: #FF001C;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
 
 .icon-div h4 {
@@ -142,6 +155,7 @@
     display: flex;
     align-items: center;
     justify-content: space-betw;
+    flex-direction: row;
     gap: 20px;
     margin-top: 20px;
     width: 100%;
@@ -153,6 +167,7 @@
     justify-content: space-between;
     width: 100%;
     background-color: white;
+    flex-direction: row;
   }
   
   .graph {
@@ -287,3 +302,85 @@
     100% { opacity: 0.6; }
   }
   
+
+  
+  @media screen and (max-width: 1200px) {
+    .graphical-representation-arean{
+      flex-direction: column;
+    }
+
+    .graph-container {
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .course-attendance-data {
+      font-size: 70%;
+    }
+
+    .main-ai-div {
+      width: 30%;
+      height: 30px;
+    }
+
+    .icon-div {
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-ai-div p {
+      text-align: center;
+      font-size: 60%;
+    }
+
+    .student-img-div img {
+      width: 100px;
+      height: 100px;
+    }
+
+    .data-divs {
+      font-size: 80%;
+    }
+
+    .student-details-panel {
+      margin-top: 70px;
+    }
+
+    .student-data-div {
+      flex-direction: column;
+    }
+
+    .student-img-div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .actually-data {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+
+    .data-divs {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0px;
+      flex-direction: column;
+    }
+
+    .data-divs p {
+      width: 100%;
+      text-align: center;
+ 
+    }
+
+     }

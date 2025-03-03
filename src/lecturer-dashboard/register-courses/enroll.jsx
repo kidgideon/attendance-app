@@ -9,6 +9,7 @@ import Navbar from '../../../resuable/navbar/navbar.jsx';
 import Panel from '../../../resuable/sidepanel/panel.jsx';
 import background from './patterned.svg';
 import './rg.css';
+import hamburger from "../../../resuable/navbar/hamburger.svg";
 
 const CourseRegister = () => {
     const [courseCode, setCourseCode] = useState('');
@@ -17,6 +18,8 @@ const CourseRegister = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -28,6 +31,15 @@ const CourseRegister = () => {
         });
         return () => unsubscribe();
     }, []);
+
+    
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
 
     const handleEnroll = async (e) => {
         e.preventDefault();
@@ -78,7 +90,13 @@ const CourseRegister = () => {
 
     return (
         <div className="register-courses">
-            <Navbar  currentPage={"registerPage"}/>
+
+             <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
+             
+        {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+
+            <Navbar isOpen={isNavbarOpen}  currentPage={"registerPage"}/>
             <div className="dashboard-area">
                 <div 
                     className="patterned-div"

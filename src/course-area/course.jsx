@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import Navbar from '../../resuable/navbar/navbar';
 import Panel from '../../resuable/sidepanel/panel';
+import hamburger from "../../resuable/navbar/hamburger.svg";
 
 const fetchCourse = async (courseId, userId) => {
   if (!courseId || !userId) return null;
@@ -54,6 +55,8 @@ const Course = () => {
   const [locationDialogOpen, setLocationDialogOpen] = useState(false);
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
 
   const createSessionMutation = useMutation({
     mutationFn: async () => {
@@ -113,6 +116,15 @@ const Course = () => {
     }
   };
 
+  
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
   return (
     <div className="course-interface">
       {createSessionMutation.isLoading && (
@@ -120,8 +132,13 @@ const Course = () => {
           <CircularProgress style={{ color: '#00CBCC' }} />
         </div>
       )}
-      <Navbar />
-      <div className="course-area">
+
+{isNavbarOpen && <div className="overlay"  onClick={closeNavbar}></div>}
+
+ <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
+      <Navbar  isOpen={isNavbarOpen} />
+      <div className="dashboard-area">
         <div className="course-details-area">
           <div className="details-themselves">
             {isLoading ? (

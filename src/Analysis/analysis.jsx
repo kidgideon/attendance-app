@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { db } from "../../config/config"; 
 import { doc, getDoc } from "firebase/firestore";
 import { useQuery } from "@tanstack/react-query";
@@ -6,6 +7,7 @@ import Navbar from "../../resuable/navbar/navbar";
 import Panel from "../../resuable/sidepanel/panel";
 import { Line } from "react-chartjs-2";
 import "./analysis.css";
+import hamburger from "../../resuable/navbar/hamburger.svg";
 import {
   Chart as ChartJS,
   LineElement,
@@ -25,7 +27,7 @@ const fetchCourseData = async ({ queryKey }) => {
   const [, courseId, studentId] = queryKey;
   const courseRef = doc(db, "courses", courseId);
   const courseSnap = await getDoc(courseRef);
-
+ 
   if (!courseSnap.exists()) throw new Error("Course not found");
 
   const courseData = courseSnap.data();
@@ -49,6 +51,8 @@ const fetchStudentData = async ({ queryKey }) => {
 
 const Analysis = () => {
   const { courseId, studentId } = useParams();
+   const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
 
   // Fetch course and attendance data
   const { data: attendanceData, isLoading: isAttendanceLoading } = useQuery({
@@ -107,10 +111,24 @@ const Analysis = () => {
     },
   };
 
+   
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
+
   return (
     <div>
-      <Navbar />
+      
+       <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+      <Navbar  isOpen={isNavbarOpen} />
+      {isNavbarOpen && <div className="overlay"  onClick={closeNavbar}></div>}
       <div className="dashboard-area">
+
         <div className="student-details-panel">
           <div className="hyh">
             <h2>Student details</h2>

@@ -180,3 +180,83 @@
 .register-interface {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+
+.or-aspect {
+  width: 70%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 20px;
+  color: #A8AFC1;
+  display: none;
+}
+
+
+.color-area {
+  width: 100%;
+  display: none;
+}
+
+
+@media screen and (max-width: 900px) {
+  .featured-image-area {
+    display: none;
+  }
+
+  .form-input-area {
+    width: 100%;
+    border-radius: 0px;
+  }
+
+  .signup-area h1 {
+    color: #00CBCC;
+  }
+
+  .bacck-arrow {
+    display: none;
+  }
+
+  .top-area {
+    display: none;
+  }
+
+  .bottom-section-area-nav {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .bottom-section-area-nav a {
+    color: #00CBCC;
+  }
+
+  .terms-and-co {
+    display: none;
+  }
+
+  .or-aspect {
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: 20px;
+    color: #A8AFC1;
+  }
+
+  .line-in0r {
+    border: 1px solid #A8AFC1;
+    font-size: 0%;
+    width: 30%;
+  }
+
+  .color-area {
+    width: 100%;
+    display: none;
+  }
+
+}

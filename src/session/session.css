@@ -190,3 +190,31 @@
 .student-statistic-link a {
   color: #00CBCC;
 }
+
+
+
+@media screen and (max-width: 1200px) {
+  
+  .date-area {
+    margin-top: 40px;
+    display: none;
+  }
+
+  .class-attendance-functions {
+    margin-top: 70px;
+  }
+
+  .student-profile-picture img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .student-statistic-link {
+    font-size: 70%;
+  }
+
+  .student-details {
+    font-size: 90%;
+  }
+
+   }

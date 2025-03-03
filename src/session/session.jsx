@@ -1,5 +1,6 @@
 import './session.css';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
 import { db } from '../../config/config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import toast from 'react-hot-toast';
@@ -7,13 +8,14 @@ import Navbar from '../../resuable/navbar/navbar';
 import Panel from '../../resuable/sidepanel/panel';
 import { format } from 'date-fns';
 import { useQuery, useMutation } from '@tanstack/react-query';
+import hamburger from "../../resuable/navbar/hamburger.svg";
 
 // Function to fetch session data
 const fetchCourseAndSession = async ({ queryKey }) => {
   const [, courseId, sessionId] = queryKey;
   const courseDocRef = doc(db, 'courses', courseId);
   const courseSnapshot = await getDoc(courseDocRef);
-  
+
   if (!courseSnapshot.exists()) {
     throw new Error('Course not found');
   }
@@ -34,13 +36,13 @@ const fetchParticipants = async (studentIds) => {
     return userSnapshot.exists() ? userSnapshot.data() : null;
   });
 
-  const participants = await Promise.all(promises);
-  return participants.filter(user => user !== null);
+  return (await Promise.all(promises)).filter(user => user !== null);
 };
 
 const Session = () => {
   const { courseId, sessionId } = useParams();
   const navigate = useNavigate();
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
 
   // Fetch course & session data
   const { data, error, isLoading } = useQuery({
@@ -76,6 +78,9 @@ const Session = () => {
       toast.success('Session ended successfully!');
     },
   });
+
+  const toggleNavbar = () => setIsNavbarOpen((prev) => !prev);
+  const closeNavbar = () => setIsNavbarOpen(false);
 
   // Handle Print Function
   const handlePrint = () => {
@@ -133,11 +138,9 @@ const Session = () => {
 
   // Handle Copy Code
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(session?.code || '').then(() => {
-      toast.success('Session code copied to clipboard!');
-    }).catch(() => {
-      toast.error('Failed to copy session code.');
-    });
+    navigator.clipboard.writeText(session?.code || '')
+      .then(() => toast.success('Session code copied to clipboard!'))
+      .catch(() => toast.error('Failed to copy session code.'));
   };
 
   if (isLoading) return <p>Loading session...</p>;
@@ -151,8 +154,13 @@ const Session = () => {
 
   return (
     <div className="session-interface">
-      <Navbar />
-      <div className="session-proper-area">
+      <Navbar isOpen={isNavbarOpen} />
+      
+      {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+
+      <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+      
+      <div className="dashboard-area">
         <div className="date-area">
           <p>{course?.courseName || 'N/A'}</p>
           <p>Date: {formattedDate}</p>
@@ -161,7 +169,7 @@ const Session = () => {
         <div className="class-attendance-functions">
           <p className="active-inactive-direction">
             <span className={session?.active ? 'green-dot' : 'red-dot'}></span> 
-            <p>{session?.active ? 'Active' : 'Inactive'}</p>
+            {session?.active ? 'Active' : 'Inactive'}
           </p>
 
           <div className="code-div">
@@ -188,7 +196,7 @@ const Session = () => {
             participants.map((participant, index) => (
               <div key={participant.uid} className="students">
                 <div className="student-profile-picture">
-                  <img src={participant.profilePicture || 'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media'} alt="Student Profile" />
+                  <img src={participant.profilePicture || 'default-profile.png'} alt="Student Profile" />
                 </div>
 
                 <div className="student-details">
@@ -196,10 +204,9 @@ const Session = () => {
                   <p>{participant.matriculationNumber || 'N/A'}</p>
                 </div>
 
-             
-<div className="student-statistic-link">
-  <Link to={`/analysis/${course.courseId}/${participant.uid}`}>View Statistics &gt;</Link>
-</div>
+                <div className="student-statistic-link">
+                  <Link to={`/analysis/${course.courseId}/${participant.uid}`}>View Statistics &gt;</Link>
+                </div>
               </div>
             ))
           ) : (

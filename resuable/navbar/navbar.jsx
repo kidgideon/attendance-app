@@ -14,6 +14,7 @@ import hoverDashboard from "./greenDashboard.svg";
 import hoverCourse from "./greenCourse.svg";
 import hoverRegister from "./greenRegister.svg";
 import hoverHistory from "./greenHistory.svg";
+import hamburger from "./hamburger.svg"
 
 const auth = getAuth();
 
@@ -26,7 +27,7 @@ const fetchUser = () => {
   });
 };
 
-const Navbar = ({ currentPage }) => {
+const Navbar = ({ currentPage, isOpen }) => {
   const navigate = useNavigate();
   const [hoveredPage, setHoveredPage] = useState(null);
 
@@ -61,7 +62,7 @@ const Navbar = ({ currentPage }) => {
   };
 
   return (
-    <div className="navbar">
+    <div className={`navbar ${isOpen ? "navbar-show-now" : ""}`}>
       <div className="top-section-nav">
         <img src={logo} alt="Eclassify Logo" />
         <h2>Eclassify</h2>

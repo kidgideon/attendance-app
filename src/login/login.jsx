@@ -156,6 +156,9 @@ const Login = () => {
           <img src={featured} alt="" />
         </div>
         <div className="form-input-area">
+        <div className="color-area">
+        color
+      </div>
           <p className="top-area">Don't have an account? <a href="/register">signup</a></p>
     <div className="signup-area">
     <h1>Hi There!</h1>
@@ -188,6 +191,12 @@ const Login = () => {
         Sign in
       </button>
     </form>
+
+    <div className="or-aspect">
+    <div className="line-in0r">y</div>
+    continue withhttps://www.figma.com/design/DPiUsr023ju4JDrPHIxNYu/eclassify?node-id=0-1&m=dev&t=UPdirNpqj2ZEbj3o-1
+    <div className="line-in0r">y</div>
+  </div>
     <div className="continue-with">
       <div>
       <img src={facebook} alt="" />
@@ -202,6 +211,8 @@ const Login = () => {
     </div>
      
     </div>
+
+    <p className="bottom-section-area-nav">Don't have an account? <a href="/register">signup</a></p>
     </div>
     <p className='terms-and-co'>Terms and Conditions</p>
         </div>

@@ -10,6 +10,7 @@
      justify-content: center;
      align-items: center;
      flex-direction: column;
+     transition: 0.4s ease-in;
 }
 
 .top-section-nav {
@@ -107,3 +108,13 @@
       transform: translateY(0);
     }
   }
+
+  
+@media screen and (max-width: 1200px) {
+  
+.navbar-show-now {
+    z-index: 100;
+    right: 70px;
+    width: 300px;
+}
+}

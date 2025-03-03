@@ -77,8 +77,9 @@
 
   .course-class-history-compiled {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -119,4 +120,8 @@
     margin: 5px;
   }
 
-  
+  @media screen and (max-width: 1200px) {
+ .course-details-area {
+  margin-top: 80px;
+ }
+  }

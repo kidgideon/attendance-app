@@ -9,6 +9,7 @@
     position: relative; /* Needed for absolute positioning of blue effects */
     overflow: hidden;
     padding: 2px;
+    flex-direction: row;
 }
 
 .welcome-image {
@@ -19,7 +20,6 @@
 }
 
 .left-area {
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -67,3 +67,18 @@
     right: -20px;
     transform: rotate(-10deg);
 }
+
+
+@media screen and (max-width: 1200px) {
+    .welcome-div {
+        flex-direction: column;
+        min-height: 400px;
+        width: 100%;
+    }
+
+    .welcome-image {
+        width: 100%;
+        object-fit: cover;
+    }
+
+  }

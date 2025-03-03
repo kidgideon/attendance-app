@@ -143,11 +143,15 @@ const Register = () => {
  <div onClick={moveBack} className='bacck-arrow'>
           <img src={eclipse} alt="" />
           </div>
+        
     <div className="main-section">
     <div className="featured-image-area">
       <img src={featured} alt="" />
     </div>
     <div className="form-input-area">
+      <div className="color-area">
+        color
+      </div>
       <p className="top-area">Already have an account? <a href="/login">signin</a></p>
 <div className="signup-area">
 <h1 style={{margin: '0px'}}>Create Account</h1>
@@ -210,6 +214,12 @@ const Register = () => {
     Register
   </button>
 </form>
+
+  <div className="or-aspect">
+    <div className="line-in0r">y</div>
+    continue with
+    <div className="line-in0r">y</div>
+  </div>
 <div  style={{margin: '10px'}} className="continue-with">
   <div>
   <img src={facebook} alt="" />
@@ -224,6 +234,8 @@ const Register = () => {
 </div>
  
 </div>
+
+<p className="bottom-section-area-nav">Already have an account? <a href="/login">signin</a></p>
 </div>
 <p className='terms-and-co'>Terms and Conditions</p>
     </div>

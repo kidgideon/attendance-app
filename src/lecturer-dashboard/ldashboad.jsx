@@ -11,6 +11,7 @@ import search from "./search.svg";
 import time from "./time.svg";
 import WelcomeDiv from "../../resuable/WelcomeDiv/welcome";
 import "./ldashboard.css";
+import hamburger from "../../resuable/navbar/hamburger.svg";
 
 const fetchCourses = async (userId) => {
   if (!userId) return [];
@@ -41,8 +42,8 @@ const Lecturer = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
 
-  // Authentication State Handling
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -57,22 +58,31 @@ const Lecturer = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  // Fetch courses using React Query (only when userId is available)
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["courses", userId],
     queryFn: () => fetchCourses(userId),
-    enabled: !!userId, // Ensures it only fetches when userId is available
-    staleTime: 30 * 60 * 1000, // 30 minutes cache
-    cacheTime: 60 * 60 * 1000, // 1 hour cache
+    enabled: !!userId,
+    staleTime: 30 * 60 * 1000,
+    cacheTime: 60 * 60 * 1000,
   });
 
   if (authLoading) return null;
 
   const todayDate = format(new Date(), "MMMM d, yyyy");
 
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
   return (
-    <div className="lecturer-dashboard">
-      <Navbar currentPage="lecturerDashboard" lecturerId={userId} />
+    <div className={`lecturer-dashboard ${isNavbarOpen ? "navbar-show-now" : ""}`}>
+      <Navbar currentPage={"lecturerDashboard"} isOpen={isNavbarOpen}/>
+
+      {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
 
       <div className="dashboard-area">
         <div className="top-dashboard-area">
@@ -80,9 +90,10 @@ const Lecturer = () => {
           <p>{todayDate}</p>
         </div>
 
+        <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
         <WelcomeDiv />
 
-        {/* Courses Section */}
         {coursesLoading ? (
           <div className="courses-available-area">
             <div className="top-courses-available">
@@ -128,7 +139,7 @@ const Lecturer = () => {
           </div>
         )}
 
-        {/* Additional Dashboard Sections */}
+        {/* ✅ Your directional texts section is intact */}
         <div className="directional-texts-ds">
           <div className="instance">
             <h3>Students insight at a Glance</h3>
@@ -152,7 +163,7 @@ const Lecturer = () => {
           </div>
         </div>
 
-        {/* History Section */}
+        {/* ✅ Your history section is intact */}
         <div className="history-div-if-any">
           <div className="history-area-top">
             <p>History</p>

@@ -7,6 +7,7 @@ import { doc, getDoc } from "firebase/firestore";
 import WelcomeDiv from "../../../resuable/WelcomeDiv/welcome";
 import Navbar from "../../../resuable/navbar/navbar";
 import Panel from "../../../resuable/sidepanel/panel";
+import hamburger from "../../../resuable/navbar/hamburger.svg";
 
 const fetchCourses = async (userId) => {
   if (!userId) return [];
@@ -41,6 +42,7 @@ const CoursesPage = () => {
   const { uid } = useParams();
   const navigate = useNavigate();
   const [userId, setUserId] = useState(uid || auth.currentUser?.uid);
+   const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
 
   useEffect(() => {
     if (!userId) {
@@ -57,9 +59,22 @@ const CoursesPage = () => {
     cacheTime: 60 * 60 * 1000, // Keep in cache for 1 hour
   });
 
+  
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
   return (
     <div className="courses-page">
-      <Navbar currentPage="coursesPage" lecturerId={userId} />
+        <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
+        {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+      
+      <Navbar isOpen={isNavbarOpen} currentPage="coursesPage" lecturerId={userId} />
       <div className="dashboard-area">
         <WelcomeDiv />
         <div className="courses-area">
