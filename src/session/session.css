@@ -205,8 +205,8 @@
   }
 
   .student-profile-picture img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
   }
 
   .student-statistic-link {
@@ -215,6 +215,14 @@
 
   .student-details {
     font-size: 90%;
+  }
+
+  .student-statistic-link {
+    width: 40%;
+  }
+  
+  .student-profile-picture {
+    width: 35%;
   }
 
    }

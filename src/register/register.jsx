@@ -227,7 +227,7 @@ const Register = () => {
   </div>
 
 <div>
-<img src={google} alt="google" onClick={handleGoogleSignUp}
+<img src={google} alt="google" 
     style={{ cursor: 'pointer' }}
   />
   <p>Google</p>

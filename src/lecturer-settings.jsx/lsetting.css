@@ -147,3 +147,79 @@
     border-radius: 5px;
   }
   
+
+@media screen and (max-width: 1200px) {
+      
+    .profile-area-main-section {
+        flex-direction: column;
+    }
+
+    .page-section-navigator {
+        width: 100%;
+    }
+
+    .navigator{
+        width:  100%;
+        margin-bottom: 20px;
+    }
+
+    .navigated-actual-form-area {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .navigated-actual-form-area input {
+        width: 100%;
+    }
+
+    .picture-area {
+        width: 95%;
+    }
+
+    .picture-area img {
+        width: 100px;
+        height: 100px;
+        border-radius: 100%;
+        margin: 0px;
+    }
+
+    .form-area-navigated {
+        width: 100%;
+    }
+
+    .form-area-navigated  div{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .form-area-navigated div p {
+        width: 70%;
+        text-align: start;
+    }
+
+
+
+    .form-area-navigated div input {
+        width: 250px;
+        outline: none;
+    }
+
+    .page-direction-area {
+        display: none;
+    }
+    
+    
+.settings-for-lecturer h3 {
+    width: 70%;
+    text-align: start;
+    margin-top: 58px;
+}
+
+
+}

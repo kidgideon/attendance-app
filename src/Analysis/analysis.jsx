@@ -160,26 +160,40 @@ const Analysis = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="course-attendance-data">
-            {["Total Attended", "Total Classes", "Total Absent"].map((title, index) => {
-              const icons = ["fa-user green", "fa-chart-simple purple", "fa-circle-xmark red"];
-              const values = [attendanceData?.totalAttended, attendanceData?.totalClasses, attendanceData?.totalAbsent];
+        <div className="course-attendance-data" style={{ marginTop: "20px", justifyContent: "space-between" }}>
+          <div className="main-ai-div" style={{ background: "rgb(238, 238, 238)" }}>
+            <div className="icon-div green">
+              <i className="fa-regular fa-user"></i>
+            </div>
+            <div className="atten-data-div">
+              <h3>{attendanceData?.totalAttended}</h3>
+              <p>Total Attended</p>
+            </div>
+          </div>
 
-              return (
-                <div className="main-ai-div" key={index}>
-                  <div className={`icon-div ${icons[index]}`}>
-                    <i className={`fa-regular ${icons[index]}`}></i>
-                  </div>
-                  <div className="atten-data-div">
-                    <h3>{isAttendanceLoading ? <div className="skeleton skeleton-text"></div> : `${values[index]} classes`}</h3>
-                    <p>{title}</p>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="main-ai-div" style={{ background: "rgb(238, 238, 238)" }}>
+            <div className="icon-div purple">
+              <i className="fa-solid fa-chart-simple"></i>
+            </div>
+            <div className="atten-data-div">
+              <h3>{attendanceData?.totalClasses}</h3>
+              <p>Total classes</p>
+            </div>
+          </div>
+
+          <div className="main-ai-div" style={{ background: "rgb(238, 238, 238)" }}>
+            <div className="icon-div red">
+              <i className="fa-regular fa-circle-xmark"></i>
+            </div>
+            <div className="atten-data-div">
+              <h3>{attendanceData?.totalAbsent}</h3>
+              <p>Total Absent</p>
+            </div>
           </div>
         </div>
+
 
         <div className="graphical-representation-area">
           <div className="graph-container">

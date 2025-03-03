@@ -74,13 +74,13 @@
 }
 
 .course-attendance-data {
-    width: 100%;
+    width: 90%;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 30px;
     align-items: center;
     flex-direction: row;
     padding-bottom: 20px;
-
 }
 
 .main-ai-div {
@@ -90,8 +90,7 @@
     flex-direction: row;
     width: 200px;
     border-radius: 8px;
-    background-color: #F9F9F9;
-    height: 70px;
+    background-color: rgb(238, 238, 238);
 }
 
 .icon-div {
@@ -120,7 +119,6 @@
      display: flex;
      justify-content: center;
      align-items: center;
-     
 }
 
 .red {
@@ -315,7 +313,8 @@
     }
 
     .course-attendance-data {
-      font-size: 70%;
+      font-size: 90%;
+  
     }
 
     .main-ai-div {
@@ -342,7 +341,7 @@
     }
 
     .data-divs {
-      font-size: 80%;
+      font-size: 90%;
     }
 
     .student-details-panel {
@@ -380,7 +379,18 @@
     .data-divs p {
       width: 100%;
       text-align: center;
- 
+    }
+
+    .course-attendance-data {
+      flex-wrap: wrap;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+    }
+
+    .main-ai-div {
+      padding: 10px;
     }
 
      }

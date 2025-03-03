@@ -143,7 +143,6 @@ const Session = () => {
       .catch(() => toast.error('Failed to copy session code.'));
   };
 
-  if (isLoading) return <p>Loading session...</p>;
   if (error) {
     toast.error(error.message);
     navigate(-1);

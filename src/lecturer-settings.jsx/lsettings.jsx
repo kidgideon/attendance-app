@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import hamburger from "../../resuable/navbar/hamburger.svg";
 
 const DEFAULT_PROFILE_PICTURE =
   "https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media";
@@ -27,6 +28,8 @@ const LecturerSetting = () => {
   const [activeSection, setActiveSection] = useState("profile");
   const [selectedImage, setSelectedImage] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
 
   // Get authenticated user
   const [currentUser, setCurrentUser] = useState(null);
@@ -136,9 +139,21 @@ const LecturerSetting = () => {
 
   const todayDate = format(new Date(), "MMMM d, yyyy");
 
+  
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
   return (
     <div className="settings-for-lecturer">
-      <Navbar currentPage="settings" lecturerId={finalLecturerId} />
+      <Navbar isOpen={isNavbarOpen} currentPage="settings" lecturerId={finalLecturerId} />
+
+              <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
+      {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
       <div className="dashboard-area">
         <Toaster position="top-center" />
         {isLoading && (

@@ -87,7 +87,6 @@
   .class-itself {
     width: 250px;
     flex-shrink: 0; /* Prevent items from shrinking */
-
     height: 150px;
     display: flex;
     justify-content: center;
@@ -123,5 +122,9 @@
   @media screen and (max-width: 1200px) {
  .course-details-area {
   margin-top: 80px;
+ }
+
+ .class-itself {
+  width: 300px;
  }
   }
