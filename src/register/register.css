@@ -66,6 +66,7 @@
 
 .input-container input {
   width: 300px;
+  max-width: 250px;
   height: 20px;
   padding: 10px 25px;
   margin: 10px;

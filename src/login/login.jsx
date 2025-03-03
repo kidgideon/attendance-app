@@ -194,7 +194,7 @@ const Login = () => {
 
     <div className="or-aspect">
     <div className="line-in0r">y</div>
-    continue withhttps://www.figma.com/design/DPiUsr023ju4JDrPHIxNYu/eclassify?node-id=0-1&m=dev&t=UPdirNpqj2ZEbj3o-1
+    continue with
     <div className="line-in0r">y</div>
   </div>
     <div className="continue-with">
