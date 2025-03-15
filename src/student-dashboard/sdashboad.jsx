@@ -168,7 +168,7 @@ const Student = () => {
           );
 
           if (distance > 100) {
-            toast.error(`You are too far from the lecture hall. (${distance}m away)`);
+            toast.error("You are too far from the lecture hall." (`${distance}m away`));
             return;
           }
 
@@ -223,7 +223,6 @@ const Student = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="student-dashboard">
       <StudentNavbar currentPage={"dashboard"}  isOpen={isNavbarOpen}/>
