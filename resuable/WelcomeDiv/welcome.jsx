@@ -39,7 +39,9 @@ const WelcomeDiv = () => {
 
   return (
     <div className="welcome-div">
+      <div className="image-div-area">
       <img src={imageI} alt="Classroom" className="welcome-image" />
+      </div>
       <div className="left-area">
         <h1>
           <span className="highlight">Hello,</span>{" "}

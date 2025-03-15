@@ -60,6 +60,10 @@
   .active-inactive-direction p {
     font-weight: bold;
     margin: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
   }
 
   .green-dot {
@@ -71,6 +75,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 5px;
   }
 
   .red-dot {
@@ -82,6 +87,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 5px;
   }
 
 .code-div {
@@ -223,6 +229,10 @@
   
   .student-profile-picture {
     width: 35%;
+  }
+
+  .class-attendance-functions {
+    background-color: #00CBCC;
   }
 
    }

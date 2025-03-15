@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import purpleImg from "./purpleImage.svg";
 import man from "./man.svg";
 import computer from "./computer.svg";
+import hamburger from "../../resuable/navbar/hamburger.svg";
 
 const Student = () => {
   const [studentId, setStudentId] = useState(localStorage.getItem("studentId") || null);
@@ -18,6 +19,8 @@ const Student = () => {
   const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]); // Student's enrolled courses
   const [attendanceStats, setAttendanceStats] = useState({ total: 0, present: 0, absent: 0 });
+   const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
 
   useEffect(() => {
     // Listen for authentication state changes
@@ -79,6 +82,15 @@ const Student = () => {
       present,
       absent: total - present,
     });
+  };
+
+  
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
   };
 
   const getUserLocation = () => {
@@ -214,43 +226,46 @@ const Student = () => {
 
   return (
     <div className="student-dashboard">
-      <StudentNavbar currentPage={"dashboard"}/>
+      <StudentNavbar currentPage={"dashboard"}  isOpen={isNavbarOpen}/>
+      
+      {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+       <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+      
 
-      <div className="student-area-official">
+      <div className="dashboard-area">
         <StudentWelcome />
 
-        <div className="course-attendance-data" style={{ marginTop: "20px", justifyContent: "space-between" }}>
-          <div className="main-ai-div" style={{ background: "white" }}>
-            <div className="icon-div green">
-              <i className="fa-regular fa-user"></i>
-            </div>
-            <div className="atten-data-div">
-              <h3>{attendanceStats.present}</h3>
-              <p>Total Attended</p>
-            </div>
-          </div>
+        <div className="course-attendance-data">
+  <div className="main-ai-div">
+    <div className="icon-div green">
+      <i className="fa-regular fa-user"></i>
+    </div>
+    <div className="atten-data-div">
+      <h3>{attendanceStats.present}</h3>
+      <p>Attendance Points</p>
+    </div>
+  </div>
 
-          <div className="main-ai-div" style={{ background: "white" }}>
-            <div className="icon-div purple">
-              <i className="fa-solid fa-chart-simple"></i>
-            </div>
-            <div className="atten-data-div">
-              <h3>{attendanceStats.total}</h3>
-              <p>Attendance Points</p>
-            </div>
-          </div>
+  <div className="main-ai-div">
+    <div className="icon-div purple">
+      <i className="fa-solid fa-chart-simple"></i>
+    </div>
+    <div className="atten-data-div">
+      <h3>{attendanceStats.total}</h3>
+      <p>Total classes</p>
+    </div>
+  </div>
 
-          <div className="main-ai-div" style={{ background: "white" }}>
-            <div className="icon-div red">
-              <i className="fa-regular fa-circle-xmark"></i>
-            </div>
-            <div className="atten-data-div">
-              <h3>{attendanceStats.absent}</h3>
-              <p>Total Absent</p>
-            </div>
-          </div>
-        </div>
-
+  <div className="main-ai-div">
+    <div className="icon-div red">
+      <i className="fa-regular fa-circle-xmark"></i>
+    </div>
+    <div className="atten-data-div">
+      <h3>{attendanceStats.absent}</h3>
+      <p>Total Absent</p>
+    </div>
+  </div>
+</div>
         <div className="attendance-sign-area">
           <div className="attendance-area">
             <img src={computer} alt="" />
@@ -286,6 +301,8 @@ const Student = () => {
       </div>
 
       <StudentPanel />
+
+      
     </div>
   );
 };

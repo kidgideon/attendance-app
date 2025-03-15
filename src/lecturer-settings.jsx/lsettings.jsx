@@ -165,8 +165,7 @@ const LecturerSetting = () => {
           <p>Settings</p>
           <p>{todayDate}</p>
         </div>
-
-        <h3>Account Settings</h3>
+        <h3 className="intro-h3">Account Settings</h3>
 
         <div className="profile-area-main-section">
           <div className="page-section-navigator">

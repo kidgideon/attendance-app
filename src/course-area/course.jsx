@@ -98,23 +98,45 @@ const Course = () => {
   });
 
   const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          setLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
-          toast.success("Location retrieved successfully!");
-          setLocationDialogOpen(true);
-        },
-        error => {
-          setLocationError(error.message);
-          toast.error("Location access denied. Please enable location access.");
-        },
-        { timeout: 10000, maximumAge: 0 }
-      );
-    } else {
+    if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by this browser.");
+      return;
     }
+  
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy, // Capture accuracy level
+        });
+  
+        toast.success("High-accuracy location retrieved successfully!");
+        setLocationDialogOpen(true);
+      },
+      (error) => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            toast.error("Location access denied. Please enable location in your settings.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            toast.error("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            toast.error("Location request timed out. Try again.");
+            break;
+          default:
+            toast.error("An unknown error occurred while fetching location.");
+        }
+      },
+      {
+        enableHighAccuracy: true, // Request high-accuracy GPS data
+        timeout: 15000, // Increase timeout to allow precise location fetching
+        maximumAge: 0, // Prevent caching old location data
+      }
+    );
   };
+  
 
   
   const toggleNavbar = () => {

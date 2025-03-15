@@ -89,4 +89,22 @@
         width: 100%;
         text-align: center;
     }
+
+    .register-course-form form {
+        background-color: white;
+        width: 85%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .register-course-form form div {
+        width: 100%;
+        padding: 0px;
+    }
+
+    .register-course-form form div input {
+        width: 95%;
+    }
 }

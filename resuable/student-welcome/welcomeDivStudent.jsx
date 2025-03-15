@@ -40,7 +40,11 @@ const StudentWelcome = () => {
 
   return (
     <div className="welcome-div">
-      <img src={svgImage} alt="Classroom" className="welcome-image" />
+
+    <div className="image-div-area">
+    <img src={svgImage} alt="Classroom" className="welcome-image" />
+    </div>
+      
       <div className="left-area">
         <h1>
           <span className="highlight">Hello,</span> {isLoading ? "Loading..." : `${student?.firstName || "User"} ${student?.lastName || ""}`}

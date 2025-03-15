@@ -80,11 +80,15 @@ const Lecturer = () => {
 
   return (
     <div className={`lecturer-dashboard ${isNavbarOpen ? "navbar-show-now" : ""}`}>
+
       <Navbar currentPage={"lecturerDashboard"} isOpen={isNavbarOpen}/>
 
       {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
 
       <div className="dashboard-area">
+        
+<img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+
         <div className="top-dashboard-area">
           <p>Dashboard</p>
           <p>{todayDate}</p>
@@ -160,22 +164,6 @@ const Lecturer = () => {
               Access a history of all your lectures and attendance records for better
               organization and evaluation.
             </p>
-          </div>
-        </div>
-
-        {/* ✅ Your history section is intact */}
-        <div className="history-div-if-any">
-          <div className="history-area-top">
-            <p>History</p>
-            <p>View all &gt;</p>
-          </div>
-          <div className="course-history-display">
-            <div className="initial-table">
-              <div>Course</div>
-              <div>Teacher Name</div>
-              <div>Members</div>
-              <div>Date</div>
-            </div>
           </div>
         </div>
       </div>

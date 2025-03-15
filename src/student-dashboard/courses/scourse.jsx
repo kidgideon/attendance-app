@@ -8,6 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import hamburger from "../../../resuable/navbar/hamburger.svg";
 
 const fetchCourses = async (studentId) => {
     if (!studentId) return [];
@@ -34,6 +35,8 @@ const fetchCourses = async (studentId) => {
 const StudentCourse = () => {
     const [studentId, setStudentId] = useState(null);
     const navigate = useNavigate();
+    const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -54,9 +57,20 @@ const StudentCourse = () => {
         staleTime: 10 * 60 * 1000, // Cache for 10 minutes
     });
 
+    const toggleNavbar = () => {
+        setIsNavbarOpen((prev) => !prev);
+      };
+    
+      const closeNavbar = () => {
+        setIsNavbarOpen(false);
+      };
+    
     return (
         <div className='student-courses-div'>
-            <StudentNavbar currentPage={"courses"} />
+             {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+                   <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+                  
+            <StudentNavbar currentPage={"courses"} isOpen={isNavbarOpen}/>
             <div className="dashboard-area">
                 <StudentWelcome />
 

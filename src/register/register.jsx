@@ -8,10 +8,9 @@ import { auth, db } from '../../config/config';
 import {createUserWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,sendEmailVerification,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import CircularProgress from '@mui/material/CircularProgress'; // Assuming Material UI is used
-
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -24,43 +23,54 @@ const Register = () => {
   const navigate = useNavigate();
 
 
-  const checkUsernameAndEmail = async () => {
-    const emailRef = await getDoc(doc(db, 'users', email));
-
-    if (emailRef.exists()) {
-      toast.error('Email is already in use');
-      return false;
-    }
-
-    return true;
-  };
-
-  const checkPasswordStrength = (password) => {
-    const strengthRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    setPasswordStrength(strengthRegex.test(password) ? 'Strong password' : 'Weak password');
-  };
-
   const handleEmailPasswordSignUp = async (e) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
+  
+    // Username validation: no spaces or special characters
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+      toast.error("Username can only contain letters and numbers (no spaces or special characters).");
       return;
     }
-
-    if (!await checkUsernameAndEmail()) return;
-
+  
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match.");
+      return;
+    }
+  
     setLoading(true); // Show spinner
-
+  
     try {
+      // Check if the email already exists in Firestore
+      const userDocRef = doc(db, "users", email); // Using email as document ID
+      const userDocSnap = await getDoc(userDocRef);
+  
+      if (userDocSnap.exists()) {
+        const existingUser = userDocSnap.data();
+  
+        // Check if the email is unverified
+        if (!existingUser.isEmailVerified) {
+          // Resend email verification
+          const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+          await sendEmailVerification(userCredential.user);
+  
+          toast.success("This email is already registered but not verified. A new verification link has been sent.");
+          return;
+        } else {
+          toast.error("This email is already registered and verified. Please log in.");
+          return;
+        }
+      }
+  
+      // Proceed with normal signup if the email is not registered
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
+  
       // Default profile picture
-      const defaultProfilePic = 'https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media';
-
+      const defaultProfilePic = "https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media";
+  
       // Save user details in Firestore
-      await setDoc(doc(db, 'users', user.uid), {
+      await setDoc(doc(db, "users", user.uid), {
         username,
         email,
         role,
@@ -68,18 +78,25 @@ const Register = () => {
         profilePicture: defaultProfilePic,
         isEmailVerified: false,
       });
-
+  
       // Send email verification
       await sendEmailVerification(user);
-
-      toast.success('Account created successfully! Check your email for verification.');
-      setTimeout(() => navigate('/login'), 3000);
+  
+      toast.success("Account created successfully! Check your email for verification.");
+      setTimeout(() => navigate("/login"), 4000);
     } catch (error) {
-      toast.error('Registration failed: ' + error.message);
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("This email is already registered.");
+      } else if (error.code === "auth/network-request-failed") {
+        toast.error("Network error. Please check your connection.");
+      } else {
+        toast.error("Registration failed. Please try again.");
+      }
     } finally {
       setLoading(false); // Hide spinner
     }
   };
+  
 
   const handleGoogleSignUp = async () => {
     setLoading(true); // Show spinner
@@ -149,15 +166,16 @@ const Register = () => {
       <img src={featured} alt="" />
     </div>
     <div className="form-input-area">
-      <div className="color-area">
-        color
+    <div className="color-area">
+        Create Account
       </div>
-      <p className="top-area">Already have an account? <a href="/login">signin</a></p>
+     
+ <p className="top-area">Already have an account? <a href="/login">signin</a></p>
 <div className="signup-area">
-<h1 style={{margin: '0px'}}>Create Account</h1>
-<p style={{margin: '0px'}}>Get started</p>
+<h1 className='this-text' style={{margin: '0px'}}>Create Account</h1>
+<p className='this-text'  style={{margin: '0px'}}>Get started</p>
 
-<form onSubmit={handleEmailPasswordSignUp}>
+<form className='the-form-itself-register' onSubmit={handleEmailPasswordSignUp}>
   <div className="input-container">
     <input
       type="text"
@@ -182,16 +200,12 @@ const Register = () => {
       value={password}
       onChange={(e) => {
         setPassword(e.target.value);
-        checkPasswordStrength(e.target.value);
       }}
+      
       placeholder="Password"
       required
     />
-    <div>
-      {passwordStrength && (
-        <small>{passwordStrength === 'Strong password' ? <span  style={{color: "green"}}>strong</span> : <span  style={{color: "red"}}>weak password</span> }</small>
-      )}
-    </div>
+   
   </div>
   <div className="input-container">
     <input
@@ -210,24 +224,25 @@ const Register = () => {
   </select>
 </div>
 
-  <button style={{margin: '10px'}} className="btn-3" type="submit" disabled={loading}>
+  <button className="btn-3" type="submit" disabled={loading}>
     Register
   </button>
 </form>
 
-  <div className="or-aspect">
+<div className="navigation-area-and-the-rest">
+<div className="or-aspect">
     <div className="line-in0r">y</div>
     continue with
     <div className="line-in0r">y</div>
   </div>
-<div  style={{margin: '10px'}} className="continue-with">
+<div className="continue-with">
   <div>
   <img src={facebook} alt="" />
 <p>Facebook</p>
   </div>
 
 <div>
-<img src={google} alt="google" 
+<img src={google} alt="google" onClick={handleGoogleSignUp}
     style={{ cursor: 'pointer' }}
   />
   <p>Google</p>
@@ -235,7 +250,8 @@ const Register = () => {
  
 </div>
 
-<p className="bottom-section-area-nav">Already have an account? <a href="/login">signin</a></p>
+<p className="bottom-section-area-nav">Already have an account? <Link to={"/login"}>Sign in</Link></p>
+</div>
 </div>
 <p className='terms-and-co'>Terms and Conditions</p>
     </div>
@@ -245,5 +261,4 @@ const Register = () => {
 };
 
 export default Register;
-
 

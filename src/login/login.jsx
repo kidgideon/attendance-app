@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+
 import facebook from './facebook.svg';
 import featured from './feautured.svg';
 import google from './google.svg'
 import eclipse from './Vector.svg'
 import {signInWithEmailAndPassword,GoogleAuthProvider,signInWithPopup,getAdditionalUserInfo,
 } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { CircularProgress } from '@mui/material';
 import { getDoc, doc } from 'firebase/firestore';
@@ -21,53 +22,82 @@ const Login = () => {
   const handleEmailPasswordLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-  
-      if (!userCredential.user.emailVerified) {
-        toast.error('Email not verified. Please verify your email to log in.');
-        setIsLoading(false);
-        return;
-      }
-  
-      // Fetch user role and profile details from Firestore
-      const userDoc = await getDoc(doc(db, "users", userCredential.user.uid));
-      const userData = userDoc.data();
-  
-      if (!userData) {
-        toast.error("User data not found.");
-        navigate("/home");
-        return;
-      }
-  
-      // Lecturer Profile Check
-      if (userData.role === "lecturer") {
-        if (!userData.firstName || !userData.lastName) {
-          navigate(`/lecturer/complete-profile/${userCredential.user.uid}`);
-        } else {
-          navigate(`/lecturer/${userCredential.user.uid}`);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+            toast.error("Email not verified. Please verify your email to log in.");
+            setIsLoading(false);
+            return;
         }
-      }
-      // Student Profile Check
-      else if (userData.role === "student") {
-        if (!userData.firstName || !userData.lastName || !userData.matriculationNumber) {
-          navigate(`/student/complete-profile/${userCredential.user.uid}`);
-        } else {
-          navigate(`/student/${userCredential.user.uid}`);
+
+        // Fetch user role and profile details from Firestore
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = userDoc.data();
+
+        if (!userData) {
+            toast.error("User data not found.");
+            navigate("/home");
+            return;
         }
-      } else {
-        toast.error("Role not found!");
-        navigate("/home");
-      }
-  
-      toast.success("Login Successful!");
+
+        // Lecturer Profile Check
+        if (userData.role === "lecturer") {
+            if (!userData.firstName || !userData.lastName) {
+                navigate(`/lecturer/complete-profile/${user.uid}`);
+            } else {
+                navigate(`/lecturer/${user.uid}`);
+            }
+        }
+        // Student Profile Check
+        else if (userData.role === "student") {
+            if (!userData.firstName || !userData.lastName || !userData.matriculationNumber) {
+                navigate(`/student/complete-profile/${user.uid}`);
+            } else {
+                navigate(`/student/${user.uid}`);
+            }
+        } else {
+            toast.error("Role not found!");
+            navigate("/home");
+        }
+
+        toast.success("Login Successful!");
     } catch (error) {
-      console.error("Error signing in:", error);
-      toast.error("Error in sign-in");
+        console.error("Login Error:", error.code, error.message); // Debugging info
+
+        if (error.code === "auth/invalid-credential") {
+            // Now check if the email exists in Firestore to determine the exact issue
+            const userDoc = await getDoc(doc(db, "users", email));
+
+            if (!userDoc.exists()) {
+                toast.error("No user with this email.");
+            } else {
+                toast.error("Password is incorrect.");
+            }
+        } else {
+            // Handle other common Firebase auth errors
+            switch (error.code) {
+                case "auth/invalid-email":
+                    toast.error("Invalid email format.");
+                    break;
+                case "auth/too-many-requests":
+                    toast.error("Too many failed attempts. Try again later.");
+                    break;
+                case "auth/user-disabled":
+                    toast.error("This account has been disabled.");
+                    break;
+                default:
+                    toast.error("Error in sign-in. Please try again later.");
+            }
+        }
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
-  };
+};
+
+  
   
   const handleGoogleLogin = async () => {
     setIsLoading(true);
@@ -157,14 +187,14 @@ const Login = () => {
         </div>
         <div className="form-input-area">
         <div className="color-area">
-        color
+      
       </div>
           <p className="top-area">Don't have an account? <a href="/register">signup</a></p>
     <div className="signup-area">
     <h1>Hi There!</h1>
     <p>Welcome to eClassify</p>
     
-    <form onSubmit={handleEmailPasswordLogin}>
+    <form  className='the-form-itself' onSubmit={handleEmailPasswordLogin}>
       
       <div className="input-container">
         <input
@@ -192,6 +222,7 @@ const Login = () => {
       </button>
     </form>
 
+    <div className="navigation-area-and-the-rest">
     <div className="or-aspect">
     <div className="line-in0r">y</div>
     continue with
@@ -209,10 +240,10 @@ const Login = () => {
       />
       <p>Google</p>
     </div>
-     
     </div>
-
-    <p className="bottom-section-area-nav">Don't have an account? <a href="/register">signup</a></p>
+    <p className="bottom-section-area-nav">Don't have an account? <Link to={"/register"}>sign up?</Link></p>
+    </div>
+   
     </div>
     <p className='terms-and-co'>Terms and Conditions</p>
         </div>

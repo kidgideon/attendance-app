@@ -14,7 +14,7 @@ import hoverCourse from "./greenCourse.svg";
 import hoverRegister from "./greenRegister.svg";
 import hoverHistory from "./greenHistory.svg";
 
-const StudentNavbar = ({ currentPage }) => {
+const StudentNavbar = ({ currentPage , isOpen  }) => {
   const [hoveredPage, setHoveredPage] = useState(null);
   const [studentUid, setStudentUid] = useState(null);
   const auth = getAuth();
@@ -44,7 +44,7 @@ const StudentNavbar = ({ currentPage }) => {
     : [];
 
   return (
-    <div className="navbar">
+    <div className={`navbar ${isOpen ? "navbar-show-now" : ""}`}>
       <div className="top-section-nav">
         <img src={logo} alt="Eclassify Logo" />
         <h2>Eclassify</h2>

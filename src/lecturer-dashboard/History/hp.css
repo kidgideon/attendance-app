@@ -52,6 +52,7 @@
     border-radius: 4px;
     animation: glow 1.5s infinite alternate;
   }
+
   
   @keyframes glow {
     0% {

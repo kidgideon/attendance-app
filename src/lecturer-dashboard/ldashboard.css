@@ -203,8 +203,7 @@
   align-items: center;
   flex-direction: column;
   margin-top: 20px;
-  padding: 10px 0px;
-  border-radius: 10px;
+  padding: 3px;
 }
 
 .top-courses-available {
@@ -254,13 +253,15 @@ align-items: center;
   justify-content: center;
   align-items: start;
   flex-direction: column;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   color: white;
   background: linear-gradient(270deg, #029E9F 37.78%, #028586 100%);
   margin: 10px;
   font-size: 95%;
   cursor: pointer;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 
@@ -269,6 +270,11 @@ align-items: center;
   margin: 5px;
 }
 
+.course-card h3 , .course-card h4{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+}
 .course-card div {
    width: 100%;
    display: flex;
@@ -386,11 +392,7 @@ align-items: center;
 
 
 @media screen and (max-width: 1200px) {
-  .dashboard-area {
-    left: 0px;
-    right: 0px;
-  }
-
+ 
   .directional-texts-ds {
     flex-direction: column;
   }
@@ -402,7 +404,7 @@ align-items: center;
 
   
 .theHamburger {
-  width: 50px;
+  width: 30px;
   position: fixed;
   top: 30px;
   left: 30px;
@@ -427,4 +429,24 @@ align-items: center;
   transition: opacity 0.3s ease-in-out;
 }
 
+.dashboard-area {
+  left: 0px;
+  right: 0px;
+  position: absolute;
+  background-color: white;
+  padding: 3px;
+  margin: 0px;
+}
+
+.dashboard-area::-webkit-scrollbar {
+  display: none;
+}
+
+
+.course-card h3 , .course-card h4{
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+
+}
 }

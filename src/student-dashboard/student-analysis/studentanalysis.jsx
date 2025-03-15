@@ -16,6 +16,7 @@ import {
   Filler,
   CategoryScale,
 } from "chart.js";
+import hamburger from "../../../resuable/navbar/hamburger.svg";
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, Filler, CategoryScale);
 
@@ -24,6 +25,9 @@ const Analysis = () => {
   const [studentData, setStudentData] = useState(null);
   const [attendanceData, setAttendanceData] = useState(null); // Initially null to track loading state
   const [course, SetCourse] = useState(null);
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,17 +114,29 @@ const Analysis = () => {
     },
   };
 
+  const toggleNavbar = () => {
+    setIsNavbarOpen((prev) => !prev);
+  };
+
+  const closeNavbar = () => {
+    setIsNavbarOpen(false);
+  };
+
   return (
     <div>
-      <StudentNavbar />
+      <StudentNavbar isOpen={isNavbarOpen}/>
       <div className="dashboard-area">
-        <div className="student-details-panel">
-          <div className="hyh">
-            <h2>Student details</h2>
+
+         {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+                           <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
+                          
+        <div className=" students-own-side">
+          <div className="hyh students-own-side-hyh">
+            <h2>{studentData?.lastName} {studentData?.firstName}</h2>
           </div>
 
           <div className="student-data-div">
-            <div className="student-img-div">
+            <div className="student-img-div student-img-own">
               {studentData ? (
                 <img
                   src={studentData.profilePicture || "https://firebasestorage.googleapis.com/v0/b/campus-icon.appspot.com/o/empty-profile-image.webp?alt=media"}
@@ -131,8 +147,8 @@ const Analysis = () => {
               )}
             </div>
 
-            <div className="actually-data">
-              <h1>{course ? `${course.courseName}` : <div className="skeleton skeleton-text"></div>}</h1>
+            <div className="actually-data  yes-student-data">
+              <h1 className="student-c">{course ? `${course.courseName}` : <div className="skeleton skeleton-text"></div>}</h1>
               <div className="data-divs">
                 <div>
                   <p>Matric Number</p>

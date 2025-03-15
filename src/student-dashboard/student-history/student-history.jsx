@@ -6,6 +6,8 @@ import "./student-history.css";
 import StudentNavbar from "../../../resuable/studentNavbar/StudentsNavbar";
 import StudentPanel from "../../../resuable/studentPanel/StudentPanel";
 import StudentWelcome from "../../../resuable/student-welcome/welcomeDivStudent";
+import hamburger from "../../../resuable/navbar/hamburger.svg";
+
 
 const fetchStudentHistory = async (studentId) => {
     if (!studentId) return [];
@@ -49,6 +51,9 @@ const fetchStudentHistory = async (studentId) => {
 const StudentHistory = () => {
     const [studentId, setStudentId] = useState(null);
     const auth = getAuth();
+    const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Navbar toggle state
+  
+
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -65,13 +70,23 @@ const StudentHistory = () => {
         staleTime: 10 * 60 * 1000, // Cache data for 10 minutes
     });
 
+    const toggleNavbar = () => {
+        setIsNavbarOpen((prev) => !prev);
+      };
+    
+      const closeNavbar = () => {
+        setIsNavbarOpen(false);
+      };
+
     return (
         <div className="student-history-page">
-            <StudentNavbar currentPage={"history"} />
+            <StudentNavbar currentPage={"history"}  isOpen={isNavbarOpen} />
+              {isNavbarOpen && <div className="overlay" onClick={closeNavbar}></div>}
+                               <img className="theHamburger" src={hamburger} alt="Menu" onClick={toggleNavbar} />
             <div className="dashboard-area">
                 <StudentWelcome />
-                <div className="student-history-area">
-                    <div className="history-header">
+                <div className="history-div-if-any">
+                    <div className="history-area-top">
                         <p>History</p>
                     </div>
 

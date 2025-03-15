@@ -3,14 +3,14 @@
      top: 0px;
      left: 0px;
      bottom: 0px;
-     z-index: 100px;
+     z-index: 100;
      width: 200px;
      background-color: white;    
      display: flex;
      justify-content: center;
      align-items: center;
      flex-direction: column;
-     transition: 0.4s ease-in;
+     transition: 0.2s ease-in;
 }
 
 .top-section-nav {
@@ -111,10 +111,13 @@
 
   
 @media screen and (max-width: 1200px) {
-  
+  .navbar {
+    visibility: hidden;
+  }
 .navbar-show-now {
     z-index: 100;
     right: 70px;
-    width: 300px;
+    width: 210px;
+    visibility: visible;
 }
 }

@@ -1,14 +1,14 @@
 
-.student-details-panel {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
-    background-color: white;
-    border-radius: 10px;
-    height: 400px;
-    min-height: 400px;
+.students-own-side {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 10px;
+  height: 100%;
+  min-height: 400px;
 }
 
 .hyh {
@@ -307,6 +307,10 @@
       flex-direction: column;
     }
 
+    .hyh {
+      text-align: center;
+    }
+
     .graph-container {
       flex-direction: column;
       gap: 30px;
@@ -336,8 +340,8 @@
     }
 
     .student-img-div img {
-      width: 100px;
-      height: 100px;
+      width: 150px;
+      height: 150px;
     }
 
     .data-divs {
@@ -345,11 +349,21 @@
     }
 
     .student-details-panel {
-      margin-top: 70px;
+      margin-top: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
 
     .student-data-div {
       flex-direction: column;
+      width: 100%;
+    }
+
+    .val {
+      font-size: 120%;
     }
 
     .student-img-div {
@@ -364,7 +378,6 @@
       display: flex;
       justify-content: center;
       align-items: center;
-
     }
 
     .data-divs {
@@ -375,6 +388,11 @@
       margin: 0px;
       flex-direction: column;
     }
+
+    .data-divs div {
+      width: 100%;
+    }
+
 
     .data-divs p {
       width: 100%;
@@ -391,6 +409,74 @@
 
     .main-ai-div {
       padding: 10px;
+    }
+
+    .students-own-side-hyh {
+      text-align: center;
+    }
+
+    .student-img-own {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .student-img-own img {
+      width: 150px;
+      height: 150px;
+    }
+
+    .yes-student-data {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .student-c {
+      width: 100%;
+      text-align: center;
+      font-size: 150%;
+    }
+
+    .students-own-side {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: column;
+      background-color: white;
+      border-radius: 10px;
+      height: 100%;
+      min-height: 600px;
+      margin-top: 0px;
+      margin-top: 10px;
+    }
+
+    .main-ai-div {
+      padding: 20px;
+      width: 100px;
+    }
+
+    .atten-data-div h3 {
+      font-size: 95%;
+    }
+
+    .percentage-circle {
+      width: 100%;
+    }
+
+    .bold-percentage {
+      width: 100%;
+    }
+
+    .percent-area {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
      }
